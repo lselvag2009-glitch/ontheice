@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="On The Ice"/>
+<meta name="theme-color" content="#07080F"/>
+<title>On The Ice</title>
+
+<!-- Supabase SDK -->
+
+<!-- PWA Manifest -->
+<script>
+(function(){
+  const c=document.createElement('canvas');c.width=192;c.height=192;
+  const x=c.getContext('2d');
+  x.fillStyle='#07080F';x.beginPath();x.roundRect(0,0,192,192,32);x.fill();
+  const g=x.createLinearGradient(0,0,192,192);g.addColorStop(0,'#C8102E');g.addColorStop(1,'#0057A8');
+  x.fillStyle=g;x.font='bold 26px sans-serif';x.textAlign='center';
+  x.fillText('ON THE',96,82);x.fillText('ICE',96,118);
+  x.fillStyle='rgba(168,200,232,0.4)';x.font='12px sans-serif';x.fillText('heated rivalry',96,146);
+  const icon=c.toDataURL('image/png');
+  const m={name:'On The Ice',short_name:'On The Ice',start_url:'./',display:'standalone',background_color:'#07080F',theme_color:'#07080F',icons:[{src:icon,sizes:'192x192',type:'image/png',purpose:'any maskable'}]};
+  const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
+  const a=document.createElement('link');a.rel='apple-touch-icon';a.href=icon;document.head.appendChild(a);
+})();
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+:root{--accent:#C8102E;--accent2:#0057A8;--bg:#07080F;--card:rgba(10,22,40,0.85);--text:#E8E8F0;--sub:#3A5A7A;--border:rgba(168,200,232,0.1);}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:Inter,sans-serif;color:var(--text);}
+#app{height:100%;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#1E3A5F;border-radius:4px;}
+input,textarea,select{font-family:inherit;color-scheme:dark;background:rgba(255,255,255,0.06);border:1px solid rgba(168,200,232,0.15);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;width:100%;}
+select option{background:#0A1628;}
+button{cursor:pointer;font-family:inherit;border:none;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes splashOut{0%,70%{opacity:1}100%{opacity:0;pointer-events:none;display:none}}
+.press:active{transform:scale(0.96);transition:transform 0.08s;}
+#splash{position:fixed;inset:0;z-index:9999;background:#07080F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:splashOut 0.4s ease 2.2s forwards;}
+.s-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:38px;letter-spacing:5px;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 70%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.s-sub{font-size:10px;letter-spacing:4px;color:#2A4060;text-transform:uppercase;}
+.s-bar{width:140px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+@keyframes fill{from{width:0}to{width:100%}}
+.s-fill{height:100%;background:linear-gradient(90deg,#C8102E,#0057A8);animation:fill 2s ease forwards;}
+#topbar{background:rgba(7,8,15,0.95);border-bottom:1px solid rgba(200,16,46,0.15);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:max(10px,env(safe-area-inset-top,10px));}
+.logo{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;letter-spacing:3px;background:linear-gradient(135deg,#E8C4B8,var(--accent) 45%,var(--accent2) 75%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.logo-sub{font-size:8px;letter-spacing:3px;color:#2A4060;text-transform:uppercase;}
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+#content{padding:14px;max-width:500px;margin:0 auto;padding-bottom:24px;}
+#nav{display:flex;background:rgba(6,10,20,0.97);border-top:1px solid rgba(200,16,46,0.2);padding-bottom:env(safe-area-inset-bottom,8px);flex-shrink:0;}
+#nav button{flex:1;padding:10px 0 6px;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:#3A5A7A;border:none;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s;}
+#nav button.active{color:var(--accent);}
+#nav button .ni{font-size:19px;}
+#nav button .nd{width:18px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;display:none;}
+#nav button.active .nd{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;animation:slideUp 0.25s ease;}
+.btn{display:block;width:100%;padding:13px;border-radius:14px;font-weight:700;font-size:14px;text-align:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 16px rgba(200,16,46,0.25);transition:transform 0.08s;}
+.btn:active{transform:scale(0.96);}
+.btn.b2{background:linear-gradient(135deg,#003580,#0057A8);box-shadow:0 4px 16px rgba(0,87,168,0.25);}
+.btn.outline{background:transparent;border:1.5px solid rgba(200,16,46,0.5);color:var(--accent);box-shadow:none;}
+.stitle{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.stitle .bar{width:3px;height:18px;border-radius:2px;flex-shrink:0;}
+.stitle span{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.tag{font-size:10px;border-radius:6px;padding:2px 8px;font-weight:700;white-space:nowrap;}
+.pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.pill{border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:#3A5A7A;transition:all 0.2s;}
+.pill.active{background:rgba(200,16,46,0.2);border-color:rgba(200,16,46,0.4);color:var(--accent);}
+.pbar-wrap{height:7px;border-radius:4px;overflow:hidden;background:rgba(0,87,168,0.15);}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.5s;}
+.task-item{background:var(--card);border:1px solid rgba(168,200,232,0.07);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.task-check{width:24px;height:24px;border-radius:7px;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.habit-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all 0.2s;}
+.ev-card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day{text-align:center;padding:6px 2px;border-radius:10px;cursor:pointer;font-size:13px;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid transparent;}
+.cal-day.today{background:rgba(200,16,46,0.12);color:var(--accent);}
+.cal-day.selected{background:linear-gradient(135deg,#8B0000,#C8102E);color:#fff;}
+.mini-day{display:flex;gap:12px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:12px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+.mini-day.sel{background:rgba(200,16,46,0.08);border-color:rgba(200,16,46,0.25);}
+.toggle-row{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;}
+.toggle{width:44px;height:24px;border-radius:12px;position:relative;transition:background 0.3s;flex-shrink:0;}
+.toggle .knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.4);}
+.quote-card{border-radius:16px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.mood-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.mood-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:7px 10px;display:flex;align-items:center;gap:5px;color:#5A7A9A;font-size:12px;font-weight:600;}
+.cpick{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.cpick .cc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;}
+.cpick .cc.active{border-color:#fff;}
+.pom-circle{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.pom-time{position:absolute;text-align:center;}
+#toast-wrap{position:fixed;top:12px;left:16px;right:16px;z-index:9998;pointer-events:none;}
+.toast{background:rgba(10,22,40,0.97);border-radius:12px;padding:11px 15px;margin-bottom:8px;border-left:4px solid var(--accent);animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.8);}
+.toast .tt{font-weight:700;font-size:13px;}
+.toast .tb{font-size:12px;color:#6A8BAA;}
+.section{animation:fadeIn 0.3s ease;}
+.frow{display:flex;gap:8px;margin-bottom:10px;}
+.frow input,.frow select{margin-bottom:0;}
+.mb{margin-bottom:10px;}
+.spinner{width:32px;height:32px;border:3px solid rgba(200,16,46,0.2);border-top-color:#C8102E;border-radius:50%;animation:spin 0.8s linear infinite;}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:16px;}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="s-title">ON THE ICE</div>
+  <div class="s-sub">heated rivalry</div>
+  <div class="s-bar"><div class="s-fill"></div></div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<div id="app">
+  <div id="topbar">
+    <div>
+      <div class="logo">ON THE ICE</div>
+      <div class="logo-sub">heated rivalry</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="text-align:right;">
+        <div id="today-label" style="font-size:11px;color:var(--sub);"></div>
+        <div id="score-label" style="font-size:10px;font-weight:700;color:var(--accent);"></div>
+      </div>
+      <button onclick="showSection('settings')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,16,46,0.3);border-radius:10px;padding:6px 8px;font-size:14px;color:#5A7A9A;" class="press">⚙️</button>
+    </div>
+  </div>
+
+  <div id="scroll"><div id="content"></div></div>
+
+  <div id="nav" style="display:none;">
+    <button onclick="showSection('dashboard')" id="nav-dashboard"><div class="ni">⬡</div><span>Accueil</span><div class="nd"></div></button>
+    <button onclick="showSection('tasks')" id="nav-tasks"><div class="ni">🏒</div><span>Tâches</span><div class="nd"></div></button>
+    <button onclick="showSection('journal')" id="nav-journal"><div class="ni">📖</div><span>Journal</span><div class="nd"></div></button>
+    <button onclick="showSection('more')" id="nav-more"><div class="ni">✨</div><span>Plus</span><div class="nd"></div></button>
+    <button onclick="showSection('agenda')" id="nav-agenda"><div class="ni">📅</div><span>Agenda</span><div class="nd"></div></button>
+  </div>
+</div>
+
+<script>
+// ── DONNÉES ───────────────────────────────────────────────────────────────────
+const todayStr = new Date().toISOString().slice(0,10);
+const DAYS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+const MONTHS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const COLORS = ["#C8102E","#0057A8","#FFD700","#A8C8E8","#96CEB4","#DDA0DD","#FF8C00","#20B2AA"];
+const CATS = [
+  {id:"match",label:"Match",icon:"🏒",color:"#C8102E"},
+  {id:"training",label:"Training",icon:"⛸️",color:"#0057A8"},
+  {id:"perso",label:"Perso",icon:"🏠",color:"#A8C8E8"},
+  {id:"projet",label:"Projet",icon:"🏆",color:"#FFD700"},
+  {id:"autre",label:"Autre",icon:"🌨️",color:"#8B9EC8"},
+];
+const SPECIAL=[{id:"matchday",label:"Match Day",icon:"🏒",color:"#C8102E"},{id:"rest",label:"Repos",icon:"💤",color:"#0057A8"},{id:"travel",label:"Déplacement",icon:"✈️",color:"#FFD700"},{id:"important",label:"Important",icon:"⭐",color:"#DDA0DD"},{id:"birthday",label:"Anniversaire",icon:"🎂",color:"#FF8C00"}];
+const MOODS=[{id:"fire",label:"En feu",icon:"🔥",color:"#C8102E",q:"«\u00a0Aujourd'hui, la glace est à toi.\u00a0»"},{id:"focus",label:"Focus",icon:"🎯",color:"#0057A8",q:"«\u00a0Tête baissée. Un shift à la fois.\u00a0»"},{id:"chill",label:"Chill",icon:"❄️",color:"#A8C8E8",q:"«\u00a0Le calme avant la tempête.\u00a0»"},{id:"tired",label:"Fatigué",icon:"😮‍💨",color:"#8B9EC8",q:"«\u00a0Même les champions ont des jours durs.\u00a0»"},{id:"love",label:"Amoureux",icon:"💙",color:"#DDA0DD",q:"«\u00a0La haine, c'est de l'amour qui porte un masque.\u00a0»"},{id:"game",label:"Game day",icon:"🏒",color:"#FFD700",q:"«\u00a0Ce soir, tout se joue sur la glace.\u00a0»"}];
+const QUOTES=[
+  {t:"«\u00a0Tu me détestes tellement que tu ne peux même pas me regarder.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Sur la glace, on est ennemis. En dehors... je ne sais plus ce qu'on est.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Chaque fois que je te vois, je me rappelle pourquoi je joue à ce sport.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La rivalité s'arrête quand la sirène sonne. Ce qui vient après... c'est une autre histoire.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Tu crois que je ne te vois pas ? Je ne vois que toi.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On était faits pour être dans des camps opposés.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Chaque cicatrice sur cette glace porte ton nom.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La haine, c'est de l'amour qui porte un masque de hockey.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Il n'y a rien de plus dangereux que quelqu'un qui n'a rien à perdre — sauf toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je ne t'ai pas choisi. Mais si j'avais pu choisir, ce serait encore toi.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On ne peut pas être amis. On ne peut pas être ennemis. Alors qu'est-ce qu'on est ?\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Dix ans à jouer la comédie. Et la seule chose réelle, c'était toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je t'en veux d'être aussi impossible à oublier.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Tu joues mieux quand tu es en colère contre moi. Alors je continuerai.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Le problème avec toi, c'est que tu es partout — même quand tu n'es pas là.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Personne ne me regarde comme ça. Même les gens qui m'aiment.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je pensais qu'on était rivaux. Je ne savais pas qu'on était destinés.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Sur cette glace, je suis ton adversaire. Dans ma tête, tu es mon seul public.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0C'est épuisant de te haïr. Ça l'est encore plus de ne pas pouvoir m'en empêcher.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On a passé des années à se blesser. Et maintenant je ne sais plus faire autrement avec toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Tu es la seule personne qui me regarde comme si j'étais à la fois le problème et la solution.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'aurais dû m'en douter. La seule chose plus dangereuse que toi sur la glace, c'est toi dans ma tête.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je ne suis pas en train de tomber amoureux de toi. Je suis en train de réaliser que je l'étais depuis longtemps.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On s'est battus pendant dix ans. Je suppose qu'on peut apprendre à faire autre chose.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Il y a des gens qui entrent dans ta vie et qui changent la forme de tout ce qui vient après.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Tu sais ce qui est drôle ? Même quand je gagne contre toi, j'ai l'impression de perdre quelque chose.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'ai appris à jouer contre toi. Je n'ai jamais appris à vivre sans cette tension.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Les gens pensent qu'on se déteste. Ils ont tort. On se comprend trop bien pour se détester vraiment.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On dit que les opposés s'attirent. On dit aussi qu'ils se détruisent. Peut-être les deux.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0La première fois que tu m'as regardé comme ça, j'ai su que rien ne serait plus simple.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je joue mieux quand tu es là. C'est le problème.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On aurait pu être amis si on s'était rencontrés autrement. Mais je suis content qu'on ne l'ait pas fait.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Quelqu'un qui te pousse à être meilleur, même en étant ton adversaire, c'est rare.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Je n'ai pas besoin que tu m'aimes. J'ai besoin que tu sois là.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La glace ne ment pas. Et toi non plus, quand tu crois que personne ne regarde.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0On a passé des années à faire semblant que c'était de la haine. C'était plus facile.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Tu es la seule rivale que j'aie jamais voulu garder près de moi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Même nos silences sont une conversation.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0On se ressemble trop pour être amis. Pas assez pour être ennemis.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Je ne veux pas que tu disparaisses de ma vie. Même si tu restes mon adversaire.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0La rivalité, c'est du respect déguisé en combat.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Tu m'as rendu meilleur sans jamais essayer de le faire.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'aurais préféré ne jamais te rencontrer. J'aurais préféré ne jamais savoir ce que ça fait de te vouloir dans mon camp.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Ce n'est pas de la haine. C'est de l'intensité. Il y a une différence.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Chaque match contre toi est une conversation qu'on ne sait pas avoir autrement.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Les meilleures histoires commencent toujours par « on ne pouvait pas se supporter ».\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Je savais que c'était fini quand j'ai commencé à espérer que tu gagnes aussi.\u00a0»",a:"Shane Hollander",c:"S"},
+];
+
+// Wishlist categories
+const WISH_CATS=[
+  {id:"book",label:"Livres",icon:"📚",color:"#DDA0DD"},
+  {id:"series",label:"Séries",icon:"📺",color:"#E50914"},
+  {id:"movie",label:"Films",icon:"🎬",color:"#E8A000"},
+  {id:"music",label:"Musique",icon:"🎵",color:"#1DB954"},
+  {id:"game",label:"Jeux",icon:"🎮",color:"#0057A8"},
+  {id:"other",label:"Autre",icon:"⭐",color:"#FFD700"},
+];
+
+// Objectifs étapes
+const GOAL_STATUS=[
+  {id:"todo",label:"À faire",color:"#3A5A7A"},
+  {id:"progress",label:"En cours",color:"#FFD700"},
+  {id:"done",label:"Terminé",color:"#2E7D32"},
+];
+
+// Météo icônes
+const WEATHER_ICONS={
+  0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",
+  51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"🌧️",
+  71:"❄️",73:"❄️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",
+  95:"⛈️",96:"⛈️",99:"⛈️"
+};
+const DEFAULT_HABITS=[{id:"water",label:"Hydratation",icon:"💧",color:"#45B7D1"},{id:"sport",label:"Sport",icon:"🏃",color:"#96CEB4"},{id:"read",label:"Lecture",icon:"📖",color:"#DDA0DD"},{id:"sleep",label:"Sommeil 8h",icon:"😴",color:"#8B9EC8"}];
+const THEMES={rival:{n:"Rivalité",a:"#C8102E",b:"#0057A8"},shane:{n:"Shane 🍁",a:"#C8102E",b:"#8B0000"},ilya:{n:"Ilya 🐻",a:"#0057A8",b:"#003580"},night:{n:"Nuit",a:"#DDA0DD",b:"#8B6AAA"}};
+
+// ── STORAGE LOCAL ─────────────────────────────────────────────────────────────
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let state={
+  tasks:   LS.get("oti_tasks",[{id:1,text:"Regarder les replays",done:false,priority:"high",color:"#C8102E",category:"match",reminder:""},{id:2,text:"Session patinage 6h",done:false,priority:"medium",color:"#0057A8",category:"training",reminder:""}]),
+  events:  LS.get("oti_events",[{id:1,title:"Match Red vs Blue",date:todayStr,tStart:"19:30",tEnd:"21:30",color:"#C8102E",category:"match",reminder:"",repeat:"none",note:"",lieu:"Patinoire Bell Centre"}]),
+  notes:   LS.get("oti_notes",[{id:1,title:"Stratégie power play",body:"Rotation gauche → centre → tir croisé.",color:"#C8102E",category:"match",pinned:true,date:todayStr}]),
+  habits:  LS.get("oti_habits",DEFAULT_HABITS),
+  checked: LS.get("oti_checked",{}),
+  journal: LS.get("oti_journal",{}),
+  special: LS.get("oti_special",{}),
+  favs:    LS.get("oti_favs",[]),
+  theme:   LS.get("oti_theme","rival"),
+  sound:   LS.get("oti_sound",true),
+  view:"dashboard",extraTab:"pomodoro",
+  calMonth:new Date().getMonth(),calYear:new Date().getFullYear(),calView:"month",
+  selDay:todayStr,quoteIdx:Math.floor(Math.random()*QUOTES.length),
+  filterTask:"all",filterAgenda:"all",
+  showTaskForm:false,showEvForm:false,showNoteForm:false,showSpecial:false,
+  editEvId:null,editNoteId:null,
+  pom:{secs:25*60,running:false,mode:"work",sessions:0},
+  newTask:{text:"",priority:"medium",color:"#0057A8",category:"match",reminder:""},
+  newEv:{title:"",date:todayStr,tStart:"09:00",tEnd:"10:00",color:"#C8102E",category:"match",reminder:"",repeat:"none",note:"",lieu:""},
+  newNote:{title:"",body:"",color:"#0057A8",category:"match"},
+  journalDraft:"",journalMood:null,
+  journalTab:"write", // write | history | stats
+  journalPin: LS.get("oti_jpin",""),
+  journalLocked: LS.get("oti_jpin","")!=="" ,
+  journalPinInput:"",
+  journalFullscreen:false,
+  journalEmoji:"",
+  journalTags:[],
+  journalTagInput:"",
+  newHabit:{label:"",icon:"⭐",color:"#4ECDC4"},showHabitForm:false,
+  // Wishlist
+  wishlist: LS.get("oti_wish",[]),
+  newWish:{title:"",cat:"book",note:"",done:false},showWishForm:false,wishFilter:"all",
+  // Objectifs
+  goals: LS.get("oti_goals",[]),
+  newGoal:{title:"",desc:"",color:"#C8102E",steps:[],deadline:""},showGoalForm:false,newStepText:"",
+  // Musique
+  music: LS.get("oti_music",{playlists:[],artists:[],currentMood:""}),
+  newPlaylist:{name:"",link:"",color:"#1DB954"},newArtist:{name:"",genre:""},showMusicForm:false,musicTab:"playlists",
+  // Météo
+  weather:null,weatherLoading:false,
+  // Game Day
+  gameDayMode:false,
+};
+
+// ── SONS ──────────────────────────────────────────────────────────────────────
+function playSound(t){
+  if(!state.sound)return;
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(t==="check"){o.frequency.value=880;g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);o.start();o.stop(ctx.currentTime+0.25);}
+    else if(t==="done"){const o2=ctx.createOscillator(),g2=ctx.createGain();o2.connect(g2);g2.connect(ctx.destination);o.frequency.value=523;o2.frequency.value=659;g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);g2.gain.setValueAtTime(0.15,ctx.currentTime+0.1);g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);o.start();o.stop(ctx.currentTime+0.4);o2.start(ctx.currentTime+0.1);o2.stop(ctx.currentTime+0.5);}
+    else if(t==="buzz"){o.type="sawtooth";o.frequency.value=120;g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.7);o.start();o.stop(ctx.currentTime+0.7);}
+  }catch(e){}
+}
+function vib(p=[10]){if(navigator.vibrate)navigator.vibrate(p);}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(title,body="",color="var(--accent)"){
+  const w=document.getElementById("toast-wrap");
+  const d=document.createElement("div");
+  d.className="toast";d.style.borderLeftColor=color;
+  d.innerHTML=`<div class="tt">${title}</div>${body?`<div class="tb">${body}</div>`:""}`;
+  w.appendChild(d);setTimeout(()=>d.remove(),3000);
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function cat(id){return CATS.find(c=>c.id===id)||CATS[4];}
+function getDIM(y,m){return new Date(y,m+1,0).getDate();}
+function getFDOM(y,m){let d=new Date(y,m,1).getDay();return d===0?6:d-1;}
+function fmt(ds){return new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}
+function addMin(hm,mn){if(!hm)return"";const[h,m]=hm.split(":").map(Number);const t=h*60+m+mn;return`${String(Math.floor(t/60)%24).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;}
+function evOnDate(ev,ds){
+  if(ev.date===ds)return true;
+  if(!ev.repeat||ev.repeat==="none")return false;
+  const a=new Date(ev.date+"T12:00:00"),b=new Date(ds+"T12:00:00");
+  if(b<a)return false;
+  if(ev.repeat==="daily")return true;
+  if(ev.repeat==="weekly")return Math.round((b-a)/86400000)%7===0;
+  if(ev.repeat==="monthly")return a.getDate()===b.getDate();
+  return false;
+}
+function applyTheme(k){
+  const t=THEMES[k];
+  document.documentElement.style.setProperty("--accent",t.a);
+  document.documentElement.style.setProperty("--accent2",t.b);
+}
+function cpick(val,fn){return`<div class="cpick">${COLORS.map(c=>`<div class="cc press${c===val?" active":""}" style="background:${c}" onclick="${fn}('${c}')"></div>`).join("")}</div>`;}
+function catSel(val,fn){return`<select onchange="${fn}(this.value)" class="mb">${CATS.map(c=>`<option value="${c.id}"${c.id===val?" selected":""}>${c.icon} ${c.label}</option>`).join("")}</select>`;}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  const done=state.tasks.filter(t=>t.done).length,total=state.tasks.length;
+  document.getElementById("today-label").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}).toUpperCase();
+  document.getElementById("score-label").textContent=`${done}/${total} tâches`;
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.remove("active"));
+  const nb=document.getElementById(`nav-${state.view}`);if(nb)nb.classList.add("active");
+  document.getElementById("nav").style.display=state.view==="settings"?"none":"flex";
+  document.getElementById("content").innerHTML=renderSection();
+  document.getElementById("scroll").scrollTop=0;
+
+  // Pomodoro timer
+  if(state.pom.running&&!window._pt){
+    window._pt=setInterval(()=>{
+      state.pom.secs--;
+      if(state.pom.secs<=0){
+        clearInterval(window._pt);window._pt=null;state.pom.running=false;
+        playSound("buzz");vib([200,100,200]);
+        if(state.pom.mode==="work"){state.pom.sessions++;state.pom.mode="break";state.pom.secs=5*60;}
+        else{state.pom.mode="work";state.pom.secs=25*60;}
+        render();return;
+      }
+      const mm=String(Math.floor(state.pom.secs/60)).padStart(2,"0"),ss=String(state.pom.secs%60).padStart(2,"0");
+      const pt=document.querySelector(".pom-time .pt");if(pt)pt.textContent=`${mm}:${ss}`;
+      const arc=document.querySelector("#pom-arc");
+      if(arc){const r=52,circ=2*Math.PI*r,base=state.pom.mode==="work"?25*60:5*60,pct=1-state.pom.secs/base;arc.style.strokeDashoffset=circ*(1-pct);}
+    },1000);
+  } else if(!state.pom.running&&window._pt){clearInterval(window._pt);window._pt=null;}
+}
+
+function renderSection(){
+  switch(state.view){
+    case"dashboard":return renderDash();
+    case"tasks":    return renderTasks();
+    case"notes":    return renderNotes();
+    case"journal":  return renderJournalFull();
+    case"agenda":   return renderAgenda();
+    case"cine":     return renderCine();
+    case"extra":    return renderExtra();
+    case"more":     return renderMore();
+    case"wishlist": return renderWishlist();
+    case"goals":    return renderGoals();
+    case"music":    return renderMusic();
+    case"quotes":   return renderQuotes();
+    case"settings": return renderSettings();
+    default:        return renderDash();
+  }
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDash(){
+  const done=state.tasks.filter(t=>t.done).length,total=state.tasks.length,pct=total?(done/total)*100:0;
+  const todayEvts=state.events.filter(e=>evOnDate(e,todayStr));
+  const q=QUOTES[state.quoteIdx];
+  const ac=q.c==="S"?"#C8102E":q.c==="I"?"#0057A8":"#8B6A9A";
+  const isFav=state.favs.includes(state.quoteIdx);
+  return`<div class="section">
+
+  <!-- Hero titre -->
+  <div style="text-align:center;padding:28px 16px 24px;margin-bottom:8px;">
+    <div style="font-family:'Bebas Neue',Impact,Arial Black,sans-serif;font-size:58px;letter-spacing:6px;line-height:1;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 75%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;">ON THE ICE</div>
+    <div style="font-size:13px;letter-spacing:4px;color:#C8102E;text-transform:uppercase;font-style:italic;margin-bottom:4px;">Heated Rivalry</div>
+    <div style="font-size:11px;letter-spacing:2px;color:#2A4060;text-transform:uppercase;">Casey McQuiston</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
+      <div style="height:1px;flex:1;max-width:60px;background:linear-gradient(90deg,transparent,#C8102E88);"></div>
+      <span style="font-size:20px;">🏒</span>
+      <div style="height:1px;flex:1;max-width:60px;background:linear-gradient(90deg,#0057A888,transparent);"></div>
+    </div>
+    <!-- Météo -->
+    ${state.weather&&!state.weather.error?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(168,200,232,0.15);border-radius:20px;padding:6px 14px;">
+      <span style="font-size:20px;">${state.weather.icon}</span>
+      <span style="font-size:16px;font-weight:700;color:var(--text);">${state.weather.temp}°C</span>
+      <span style="font-size:11px;color:var(--sub);">💨 ${state.weather.wind} km/h</span>
+    </div>`:`<button onclick="fetchWeather();" class="press" style="margin-top:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(168,200,232,0.15);border-radius:20px;padding:6px 14px;color:var(--sub);font-size:12px;cursor:pointer;">${state.weatherLoading?"🌡️ Chargement...":"🌤️ Voir la météo"}</button>`}
+  </div>
+
+  <div class="quote-card" style="background:linear-gradient(135deg,${ac}18,rgba(7,8,15,0.9));border:1px solid ${ac}33;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${q.c==="S"?"linear-gradient(90deg,#8B0000,#C8102E)":q.c==="I"?"linear-gradient(90deg,#003580,#0057A8)":"linear-gradient(90deg,#C8102E,#0057A8)"};"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="width:26px;height:26px;border-radius:50%;background:${ac};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">${q.c==="S"?"🍁":q.c==="I"?"🐻":"🏒"}</div>
+      <div><div style="font-size:10px;color:${ac};font-weight:700;letter-spacing:2px;text-transform:uppercase;">❝ Rivalité Brûlante</div><div style="font-size:10px;color:var(--sub);">${q.a}</div></div>
+      <button onclick="toggleFav(${state.quoteIdx})" style="margin-left:auto;background:none;border:none;font-size:18px;opacity:${isFav?1:0.3};" class="press">💙</button>
+    </div>
+    <div style="font-size:14px;color:var(--text);line-height:1.7;font-style:italic;font-family:Georgia,serif;margin-bottom:10px;">${q.t}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button onclick="nextQuote()" style="background:none;border:none;font-size:12px;color:var(--sub);" class="press">↻ Suivante</button>
+      <span style="font-size:10px;color:#1A2A3A;">${state.quoteIdx+1}/${QUOTES.length}</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:14px;">
+    ${[{i:"🏆",v:`${done}/${total}`,l:"Tâches",c:"#FFD700"},{i:"🏒",v:todayEvts.length,l:"Évènements",c:"#C8102E"},{i:"📋",v:state.notes.length,l:"Notes",c:"#0057A8"}].map(s=>`<div style="flex:1;background:var(--card);border:1px solid ${s.c}22;border-top:2px solid ${s.c}66;border-radius:14px;padding:12px;"><div style="font-size:20px;margin-bottom:4px;">${s.i}</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;font-weight:800;color:${s.c};">${s.v}</div><div style="font-size:10px;color:var(--sub);">${s.l}</div></div>`).join("")}
+  </div>
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:10px;color:var(--sub);letter-spacing:2px;text-transform:uppercase;">Score du jour</span>
+      <div style="display:flex;gap:10px;"><span style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#C8102E;letter-spacing:1px;">RED ${done}</span><span style="color:#2A4060;font-size:10px;">|</span><span style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#0057A8;letter-spacing:1px;">${total-done} BLUE</span></div>
+    </div>
+    <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%"></div></div>
+  </div>
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🏒 En jeu</span></div>
+  ${state.tasks.filter(t=>!t.done).slice(0,4).map(t=>`<div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border-left:3px solid ${t.color};border-radius:10px;padding:12px;margin-bottom:8px;" onclick="quickCheck(${t.id})" class="press"><div style="width:20px;height:20px;border-radius:6px;border:2px solid ${t.color};flex-shrink:0;"></div><span style="font-size:14px;flex:1;">${t.text}</span><span>${cat(t.category).icon}</span></div>`).join("")}
+  ${state.tasks.filter(t=>!t.done).length===0?`<div style="color:var(--sub);font-size:13px;padding:12px;text-align:center;">Tout est terminé 🎉</div>`:""}
+  ${todayEvts.length>0?`<div class="stitle" style="margin-top:8px;"><div class="bar" style="background:var(--accent2);"></div><span style="color:var(--accent2);">📅 Aujourd'hui</span></div>${todayEvts.slice(0,3).map(e=>`<div style="display:flex;gap:12px;background:rgba(255,255,255,0.03);border-left:3px solid ${e.color};border-radius:10px;padding:12px;margin-bottom:8px;"><span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:${e.color};min-width:44px;letter-spacing:1px;">${e.tStart}</span><span style="font-size:14px;flex:1;">${e.title}</span></div>`).join("")}`:""}
+</div>`;
+}
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+function renderTasks(){
+  const f=state.filterTask==="all"?state.tasks:state.tasks.filter(t=>t.category===state.filterTask);
+  const nt=state.newTask;
+  return`<div class="section">
+  <button class="btn" onclick="toggleTaskForm()" style="margin-bottom:14px;">${state.showTaskForm?"✕ Fermer":"+ Nouvelle tâche"}</button>
+  ${state.showTaskForm?`<div class="card" style="border-color:rgba(200,16,46,0.3);">
+    <input placeholder="Nom de la tâche..." value="${nt.text}" oninput="state.newTask.text=this.value" class="mb"/>
+    <div class="frow"><select onchange="state.newTask.priority=this.value"><option value="high"${nt.priority==="high"?" selected":""}>🔴 Urgent</option><option value="medium"${nt.priority==="medium"?" selected":""}>🟡 Normal</option><option value="low"${nt.priority==="low"?" selected":""}>🔵 Faible</option></select>${catSel(nt.category,"v=>state.newTask.category=v")}</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="color:var(--sub);font-size:12px;flex-shrink:0;">⏰</span><input type="time" value="${nt.reminder}" oninput="state.newTask.reminder=this.value" style="margin-bottom:0;flex:1;"/></div>
+    ${cpick(nt.color,"c=>state.newTask.color=c")}
+    <button class="btn" onclick="addTask()">Ajouter</button>
+  </div>`:""}
+  <div class="pills"><div class="pill${state.filterTask==="all"?" active":""}" onclick="state.filterTask='all';render();">Toutes</div>${CATS.map(c=>`<div class="pill${state.filterTask===c.id?" active":""}" onclick="state.filterTask='${c.id}';render();">${c.icon} ${c.label}</div>`).join("")}</div>
+  ${[false,true].map(done=>{
+    const list=f.filter(t=>t.done===done);if(!list.length)return"";
+    return`<div class="stitle"><div class="bar" style="background:${done?"#2A4060":"var(--accent)"};"></div><span style="color:${done?"#2A4060":"var(--accent)"};">${done?"— Terminées —":"— En jeu —"}</span></div>
+    ${list.map(t=>`<div class="task-item" style="border-left:4px solid ${t.color};opacity:${t.done?0.5:1};">
+      <div class="task-check press" style="color:${t.color};background:${t.done?t.color:"transparent"};" onclick="toggleTask(${t.id})">${t.done?`<span style="font-size:13px;color:#fff;">✓</span>`:""}</div>
+      <div style="flex:1;"><div style="font-size:14px;text-decoration:${t.done?"line-through":"none"};">${t.text}</div>${t.reminder?`<div style="font-size:11px;color:var(--sub);margin-top:2px;">⏰ ${t.reminder}</div>`:""}</div>
+      <span class="tag" style="background:${t.priority==="high"?"#C8102E":t.priority==="medium"?"#FFD700":"#A8C8E8"}22;color:${t.priority==="high"?"#C8102E":t.priority==="medium"?"#FFD700":"#A8C8E8"};">${t.priority==="high"?"URGENT":t.priority==="medium"?"NORMAL":"FAIBLE"}</span>
+      <span>${cat(t.category).icon}</span>
+      <button onclick="deleteTask(${t.id})" style="background:none;border:none;color:var(--sub);font-size:20px;line-height:1;" class="press">×</button>
+    </div>`).join("")}`;
+  }).join("")}
+</div>`;
+}
+
+// ── NOTES ─────────────────────────────────────────────────────────────────────
+function renderNotes(){
+  const nn=state.newNote;
+  const en=state.editNoteId?state.notes.find(n=>n.id===state.editNoteId):null;
+  const noteCard=n=>`<div style="background:${n.color}14;border:1px solid ${n.color}33;border-radius:14px;padding:14px;margin-bottom:10px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-weight:700;font-size:14px;flex:1;padding-right:8px;">${n.title}</div>
+      <div style="display:flex;gap:6px;"><button onclick="togglePin(${n.id})" style="background:none;border:none;font-size:16px;opacity:${n.pinned?1:0.3};" class="press">📌</button><button onclick="editNote(${n.id})" style="background:none;border:none;font-size:16px;opacity:0.6;" class="press">✏️</button><button onclick="deleteNote(${n.id})" style="background:none;border:none;font-size:18px;color:#C8102E;opacity:0.6;" class="press">×</button></div>
+    </div>
+    <div style="font-size:13px;color:#7A9BBB;line-height:1.5;margin-bottom:10px;white-space:pre-wrap;">${n.body}</div>
+    <div style="display:flex;align-items:center;gap:6px;"><span class="tag" style="background:${n.color}22;color:${n.color};">${cat(n.category).icon} ${cat(n.category).label}</span><span style="font-size:11px;color:#2A4A6A;margin-left:auto;">${n.date}</span></div>
+  </div>`;
+  return`<div class="section">
+  <button class="btn b2" onclick="toggleNoteForm()" style="margin-bottom:14px;">${state.showNoteForm||en?"✕ Fermer":"+ Nouvelle note"}</button>
+  ${state.showNoteForm||en?`<div class="card" style="border-color:rgba(0,87,168,0.3);">
+    <input placeholder="Titre..." value="${en?en.title:nn.title}" oninput="${en?`updateEN('title',this.value)`:`state.newNote.title=this.value`}" class="mb" style="font-size:15px;font-weight:700;"/>
+    <textarea placeholder="Contenu..." rows="4" oninput="${en?`updateEN('body',this.value)`:`state.newNote.body=this.value`}" class="mb" style="resize:none;line-height:1.6;">${en?en.body:nn.body}</textarea>
+    ${catSel(en?en.category:nn.category,en?`v=>updateEN('category',v)`:`v=>state.newNote.category=v`)}
+    ${cpick(en?en.color:nn.color,en?`c=>updateEN('color',c)`:`c=>state.newNote.color=c`)}
+    <button class="btn b2" onclick="${en?"saveNote()":"addNote()"}">${en?"Enregistrer":"Ajouter"}</button>
+  </div>`:""}
+  ${state.notes.filter(n=>n.pinned).length?`<div class="stitle"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">📌 Épinglées</span></div>${state.notes.filter(n=>n.pinned).map(noteCard).join("")}`:""}
+  <div class="stitle"><div class="bar" style="background:var(--sub);"></div><span style="color:var(--sub);">Toutes les notes</span></div>
+  ${state.notes.filter(n=>!n.pinned).length===0?`<div style="color:var(--sub);font-size:13px;padding:12px;text-align:center;">Aucune note</div>`:""}
+  ${state.notes.filter(n=>!n.pinned).map(noteCard).join("")}
+</div>`;
+}
+
+// ── AGENDA ────────────────────────────────────────────────────────────────────
+function renderAgenda(){
+  const selEvs=state.events.filter(e=>evOnDate(e,state.selDay)&&(state.filterAgenda==="all"||e.category===state.filterAgenda)).sort((a,b)=>a.tStart.localeCompare(b.tStart));
+  const sp=state.special[state.selDay]?SPECIAL.find(s=>s.id===state.special[state.selDay]):null;
+  const dim=getDIM(state.calYear,state.calMonth),fd=getFDOM(state.calYear,state.calMonth);
+
+  const calHtml=state.calView==="month"?`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <button onclick="prevMonth()" style="background:rgba(168,200,232,0.1);border:none;color:#A8C8E8;border-radius:10px;width:36px;height:36px;font-size:18px;" class="press">‹</button>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#A8C8E8;">${MONTHS[state.calMonth].toUpperCase().slice(0,3)} ${state.calYear}</div>
+      <button onclick="nextMonth()" style="background:rgba(168,200,232,0.1);border:none;color:#A8C8E8;border-radius:10px;width:36px;height:36px;font-size:18px;" class="press">›</button>
+    </div>
+    <div class="cal-grid" style="margin-bottom:6px;">${DAYS.map(d=>`<div style="text-align:center;font-size:10px;font-weight:700;color:#2A4A6A;padding:3px;">${d}</div>`).join("")}</div>
+    <div class="cal-grid">
+      ${Array(fd).fill(`<div></div>`).join("")}
+      ${Array.from({length:dim},(_,i)=>{const d=i+1,ds=`${state.calYear}-${String(state.calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;const isT=ds===todayStr,isSel=ds===state.selDay;const hasE=state.events.some(e=>evOnDate(e,ds));const sp2=state.special[ds]?SPECIAL.find(s=>s.id===state.special[ds]):null;
+      return`<div class="cal-day press${isT?" today":""}${isSel?" selected":""}" onclick="selDay('${ds}')" style="${sp2&&!isSel?`background:${sp2.color}22;border-color:${sp2.color}44;color:${sp2.color};`:""}">
+        ${sp2?`<div style="font-size:9px;">${sp2.icon}</div>`:""}
+        <div>${d}</div>${hasE&&!isSel?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);"></div>`:""}
+      </div>`;}).join("")}
+    </div>
+  </div>`:`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;">
+    ${(()=>{const d=new Date(state.selDay+"T12:00:00"),dow=d.getDay()===0?6:d.getDay()-1;const wDays=Array.from({length:7},(_,i)=>{const dd=new Date(d);dd.setDate(d.getDate()-dow+i);return dd.toISOString().slice(0,10);});
+    return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <button onclick="prevWeek()" style="background:rgba(168,200,232,0.1);border:none;color:#A8C8E8;border-radius:10px;width:36px;height:36px;font-size:18px;" class="press">‹</button>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:#A8C8E8;">${new Date(wDays[0]+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}).toUpperCase()} – ${new Date(wDays[6]+"T12:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}).toUpperCase()}</div>
+      <button onclick="nextWeek()" style="background:rgba(168,200,232,0.1);border:none;color:#A8C8E8;border-radius:10px;width:36px;height:36px;font-size:18px;" class="press">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">
+      ${wDays.map((ds,i)=>{const dd=new Date(ds+"T12:00:00"),isT=ds===todayStr,isSel=ds===state.selDay,hasE=state.events.some(e=>evOnDate(e,ds));const sp2=state.special[ds]?SPECIAL.find(s=>s.id===state.special[ds]):null;
+      return`<div class="press" onclick="selDay('${ds}')" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:12px;cursor:pointer;background:${isSel?"linear-gradient(135deg,#8B0000,#C8102E)":sp2?sp2.color+"22":isT?"rgba(200,16,46,0.12)":"transparent"};border:1px solid ${sp2&&!isSel?sp2.color+"44":"transparent"};">
+        <div style="font-size:9px;color:${isSel?"rgba(255,255,255,0.6)":"#2A4A6A"};font-weight:700;">${DAYS[i]}</div>
+        <div style="font-size:16px;font-weight:${isSel?"800":"400"};color:${isSel?"#fff":isT?"var(--accent)":"#A8C8E8"};">${dd.getDate()}</div>
+        ${sp2?`<div style="font-size:11px;">${sp2.icon}</div>`:""}
+        ${hasE&&!isSel?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);"></div>`:""}
+      </div>`;}).join("")}
+    </div>`;})()}
+  </div>`;
+
+  return`<div class="section">
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <button onclick="state.calView='month';render();" style="flex:1;padding:10px;border-radius:12px;background:${state.calView==="month"?"rgba(200,16,46,0.15)":"rgba(255,255,255,0.04)"};border:1px solid ${state.calView==="month"?"rgba(200,16,46,0.4)":"rgba(255,255,255,0.08)"};color:${state.calView==="month"?"var(--accent)":"#3A5A7A"};font-weight:700;font-size:13px;" class="press">📅 Mois</button>
+    <button onclick="state.calView='week';render();" style="flex:1;padding:10px;border-radius:12px;background:${state.calView==="week"?"rgba(200,16,46,0.15)":"rgba(255,255,255,0.04)"};border:1px solid ${state.calView==="week"?"rgba(200,16,46,0.4)":"rgba(255,255,255,0.08)"};color:${state.calView==="week"?"var(--accent)":"#3A5A7A"};font-weight:700;font-size:13px;" class="press">📆 Semaine</button>
+  </div>
+  ${calHtml}
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">${sp?sp.icon+" ":"🏒 "}${fmt(state.selDay)}</span></div>
+    <button onclick="state.showSpecial=!state.showSpecial;render();" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:5px 10px;color:var(--sub);font-size:12px;font-weight:600;white-space:nowrap;flex-shrink:0;" class="press">⭐ Marquer</button>
+  </div>
+  ${state.showSpecial?`<div class="card" style="animation:slideUp 0.2s ease;"><div style="font-size:11px;color:var(--sub);margin-bottom:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Marquer ce jour :</div><div style="display:flex;flex-wrap:wrap;gap:8px;">${SPECIAL.map(s=>`<button onclick="setSpecial('${s.id}')" style="background:${state.special[state.selDay]===s.id?s.color+"33":"rgba(255,255,255,0.05)"};border:1px solid ${state.special[state.selDay]===s.id?s.color+"66":"rgba(255,255,255,0.08)"};border-radius:10px;padding:7px 12px;color:${state.special[state.selDay]===s.id?s.color:"#7A9BBB"};font-size:13px;font-weight:700;" class="press">${s.icon} ${s.label}</button>`).join("")}${state.special[state.selDay]?`<button onclick="clearSpecial()" style="background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.2);border-radius:10px;padding:7px 12px;color:#C8102E;font-size:13px;font-weight:700;" class="press">✕ Effacer</button>`:""}</div></div>`:""}
+  <div class="pills"><div class="pill${state.filterAgenda==="all"?" active":""}" onclick="state.filterAgenda='all';render();">Tous</div>${CATS.map(c=>`<div class="pill${state.filterAgenda===c.id?" active":""}" onclick="state.filterAgenda='${c.id}';render();">${c.icon} ${c.label}</div>`).join("")}</div>
+  ${selEvs.length===0?`<div style="color:var(--sub);font-size:13px;margin-bottom:14px;padding-left:11px;font-style:italic;">Aucun évènement ce jour</div>`:""}
+  ${selEvs.map(e=>{const ec=cat(e.category);return`<div class="ev-card" style="border:1px solid ${e.color}33;border-left:4px solid ${e.color};">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;margin-bottom:4px;">${e.title}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:${e.color};letter-spacing:1px;">${e.tStart}${e.tEnd?" → "+e.tEnd:""}</span><span class="tag" style="background:${ec.color}22;color:${ec.color};">${ec.icon} ${ec.label}</span>${e.repeat&&e.repeat!=="none"?`<span class="tag" style="background:#A8C8E822;color:#A8C8E8;">🔁</span>`:""}</div></div>
+      <div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="editEv(${e.id})" style="background:rgba(255,255,255,0.06);border:none;border-radius:8px;padding:6px 8px;font-size:14px;color:#A8C8E8;" class="press">✏️</button><button onclick="deleteEv(${e.id})" style="background:rgba(200,16,46,0.1);border:none;border-radius:8px;padding:6px 8px;font-size:14px;color:#C8102E;" class="press">×</button></div>
+    </div>
+    ${e.lieu?`<div style="font-size:12px;color:var(--sub);margin-bottom:4px;">📍 ${e.lieu}</div>`:""}
+    ${e.note?`<div style="font-size:12px;color:#5A7A9A;line-height:1.4;font-style:italic;">${e.note}</div>`:""}
+    ${e.reminder?`<div style="font-size:11px;color:#2A4060;margin-top:6px;">⏰ ${e.reminder}</div>`:""}
+  </div>`;}).join("")}
+  ${state.showEvForm?`<div class="card" style="border-color:rgba(200,16,46,0.3);animation:slideUp 0.2s ease;">
+    <div style="font-size:12px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">${state.editEvId?"✏️ Modifier":"+ Nouvel évènement"}</div>
+    <input placeholder="Titre..." value="${state.newEv.title}" oninput="updateEv('title',this.value)" class="mb" style="font-size:15px;font-weight:600;"/>
+    <input type="date" value="${state.newEv.date}" oninput="updateEv('date',this.value)" class="mb"/>
+    <div class="frow"><input type="time" value="${state.newEv.tStart}" oninput="updateEv('tStart',this.value);updateEv('tEnd',addMin(this.value,60));" style="margin-bottom:0;flex:1;"/><span style="color:var(--sub);align-self:center;flex-shrink:0;">→</span><input type="time" value="${state.newEv.tEnd}" oninput="updateEv('tEnd',this.value)" style="margin-bottom:0;flex:1;"/></div>
+    <div class="frow" style="margin-top:10px;">${catSel(state.newEv.category,`v=>updateEv('category',v)`)}<select onchange="updateEv('repeat',this.value)" style="margin-bottom:0;flex:1;"><option value="none"${state.newEv.repeat==="none"?" selected":""}>Pas de répétition</option><option value="daily"${state.newEv.repeat==="daily"?" selected":""}>Tous les jours</option><option value="weekly"${state.newEv.repeat==="weekly"?" selected":""}>Toutes les semaines</option><option value="monthly"${state.newEv.repeat==="monthly"?" selected":""}>Tous les mois</option></select></div>
+    <input placeholder="📍 Lieu..." value="${state.newEv.lieu}" oninput="updateEv('lieu',this.value)" class="mb" style="margin-top:10px;"/>
+    <textarea placeholder="📝 Note..." rows="2" oninput="updateEv('note',this.value)" class="mb" style="resize:none;">${state.newEv.note}</textarea>
+    <input type="time" value="${state.newEv.reminder}" oninput="updateEv('reminder',this.value)" class="mb"/>
+    ${cpick(state.newEv.color,`c=>updateEv('color',c)`)}
+    <div style="display:flex;gap:10px;"><button class="btn" onclick="saveEv()" style="flex:1;">Enregistrer</button><button onclick="cancelEvForm()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#666;border-radius:14px;padding:13px 16px;font-weight:700;font-size:14px;" class="press">Annuler</button></div>
+  </div>`:`<button onclick="openEvForm()" class="press" style="background:rgba(200,16,46,0.06);color:var(--accent);border:1px dashed rgba(200,16,46,0.3);border-radius:14px;padding:14px;width:100%;font-size:14px;font-weight:700;margin-bottom:14px;">+ Ajouter un évènement</button>`}
+  <div class="stitle"><div class="bar" style="background:var(--sub);"></div><span style="color:var(--sub);">📋 7 prochains jours</span></div>
+  ${Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const ds=d.toISOString().slice(0,10);const dayEvts=state.events.filter(e=>evOnDate(e,ds));const sp2=state.special[ds]?SPECIAL.find(s=>s.id===state.special[ds]):null;const dw=d.getDay()===0?6:d.getDay()-1;
+  return`<div class="mini-day${ds===state.selDay?" sel":""} press" onclick="selDay('${ds}')">
+    <div style="min-width:38px;text-align:center;"><div style="font-size:9px;color:var(--sub);text-transform:uppercase;font-weight:700;">${DAYS[dw]}</div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${ds===todayStr?"var(--accent)":"#A8C8E8"};">${d.getDate()}</div></div>
+    <div style="flex:1;">${sp2?`<div style="font-size:11px;color:${sp2.color};font-weight:700;margin-bottom:3px;">${sp2.icon} ${sp2.label}</div>`:""} ${dayEvts.length===0&&!sp2?`<div style="font-size:12px;color:#2A4060;font-style:italic;">Libre</div>`:""}${dayEvts.slice(0,2).map(e=>`<div style="font-size:12px;color:#7A9BBB;margin-bottom:2px;display:flex;align-items:center;gap:6px;"><div style="width:5px;height:5px;border-radius:50%;background:${e.color};flex-shrink:0;"></div><span style="font-family:'Bebas Neue',sans-serif;font-size:12px;color:${e.color};min-width:36px;">${e.tStart}</span>${e.title}</div>`).join("")}${dayEvts.length>2?`<div style="font-size:11px;color:var(--sub);">+${dayEvts.length-2} autres</div>`:""}</div>
+  </div>`;}).join("")}
+</div>`;
+}
+
+// ── CINÉ & SÉRIES ─────────────────────────────────────────────────────────────
+const TMDB_KEY = "41014af0f559f6541f2da4cd1c5acc1a";
+const TMDB = "https://api.themoviedb.org/3";
+const TMDB_IMG = "https://image.tmdb.org/t/p/w200";
+const PLATFORM_COLORS = {"Netflix":"#E50914","Disney+":"#113CCF","HBO":"#8B5CF6","Apple TV+":"#A0A0A0","Prime Video":"#00A8E0","Paramount+":"#0064FF","Max":"#8B5CF6","Hulu":"#1CE783"};
+const PROVIDER_MAP = {8:"Netflix",337:"Disney+",119:"Prime Video",384:"HBO",350:"Apple TV+",531:"Paramount+",1899:"Max",15:"Hulu"};
+
+const CINE_CACHE = {cinema:null, series:null};
+const CINE_LOADING = {cinema:false, series:false};
+let cineTab = "cinema";
+let cineSearch = "";
+let cineSearchResults = null;
+let cineSearchLoading = false;
+
+async function searchTMDB(){
+  const q = cineSearch.trim();
+  if(!q){ cineSearchResults=null; render(); return; }
+  cineSearchLoading = true; render();
+  try{
+    const type = cineTab==="cinema" ? "movie" : "tv";
+    const data = await tmdbFetch(`/search/${type}?query=${encodeURIComponent(q)}&page=1`);
+    cineSearchResults = (data.results||[]).slice(0,8).map(m=>({
+      title: m.title||m.name,
+      date: (m.release_date||m.first_air_date) ? new Date((m.release_date||m.first_air_date)).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}) : "",
+      score: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
+      synopsis: m.overview ? (m.overview.slice(0,120)+(m.overview.length>120?"...":"")) : "Synopsis non disponible.",
+      poster: m.poster_path ? TMDB_IMG+m.poster_path : null,
+    }));
+  }catch(e){ cineSearchResults=[]; }
+  cineSearchLoading = false; render();
+}
+
+let _searchTimer = null;
+function onCineSearch(val){
+  cineSearch = val;
+  clearTimeout(_searchTimer);
+  if(!val.trim()){ cineSearchResults=null; render(); return; }
+  _searchTimer = setTimeout(searchTMDB, 500);
+}
+
+async function tmdbFetch(path){
+  const sep = path.includes("?") ? "&" : "?";
+  const url = `${TMDB}${path}${sep}api_key=${TMDB_KEY}&language=fr-FR`;
+  const res = await fetch(url, {
+    headers: { "Content-Type": "application/json" }
+  });
+  if(!res.ok) throw new Error(`TMDB ${res.status}`);
+  return res.json();
+}
+
+async function fetchCine(tab){
+  if(CINE_CACHE[tab]||CINE_LOADING[tab]) return;
+  CINE_LOADING[tab]=true; render();
+  try{
+    if(tab==="cinema"){
+      const [nowData, upData] = await Promise.all([
+        tmdbFetch("/movie/now_playing?region=FR&page=1"),
+        tmdbFetch("/movie/upcoming?region=FR&page=1")
+      ]);
+      CINE_CACHE.cinema = {
+        nowPlaying: (nowData.results||[]).slice(0,6).map(m=>({
+          title: m.title,
+          date: m.release_date ? new Date(m.release_date).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}) : "",
+          score: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
+          synopsis: m.overview ? (m.overview.slice(0,120)+(m.overview.length>120?"...":"")) : "Synopsis non disponible.",
+          poster: m.poster_path ? TMDB_IMG+m.poster_path : null,
+        })),
+        upcoming: (upData.results||[]).slice(0,5).map(m=>({
+          title: m.title,
+          date: m.release_date ? new Date(m.release_date).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}) : "2026",
+          poster: m.poster_path ? TMDB_IMG+m.poster_path : null,
+          score: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
+        }))
+      };
+    } else {
+      const [airData, popData, upcomingData] = await Promise.all([
+        tmdbFetch("/tv/on_the_air?page=1"),
+        tmdbFetch("/tv/popular?page=1"),
+        tmdbFetch("/tv/airing_today?page=1")
+      ]);
+
+      // Séries en cours
+      const newReleases = (airData.results||[]).slice(0,5).map(s=>({
+        title: s.name,
+        platform: "Streaming",
+        date: s.first_air_date ? new Date(s.first_air_date).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"}) : "",
+        synopsis: s.overview ? (s.overview.slice(0,120)+(s.overview.length>120?"...":"")) : "Synopsis non disponible.",
+        poster: s.poster_path ? TMDB_IMG+s.poster_path : null,
+        score: s.vote_average ? s.vote_average.toFixed(1) : "N/A",
+      }));
+
+      // Prochaines saisons — séries populaires avec plusieurs saisons
+      const withSeasons = await Promise.all(
+        (popData.results||[]).slice(0,8).map(async s=>{
+          try{
+            const detail = await tmdbFetch(`/tv/${s.id}`);
+            return {
+              title: detail.name,
+              seasons: detail.number_of_seasons||1,
+              nextSeason: (detail.number_of_seasons||1)+1,
+              status: detail.status,
+              date: detail.next_episode_to_air?.air_date
+                ? new Date(detail.next_episode_to_air.air_date).toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"})
+                : detail.last_air_date
+                  ? new Date(detail.last_air_date).toLocaleDateString("fr-FR",{month:"short",year:"numeric"})
+                  : "À venir",
+              poster: detail.poster_path ? TMDB_IMG+detail.poster_path : null,
+              score: detail.vote_average ? detail.vote_average.toFixed(1) : "N/A",
+              network: detail.networks?.[0]?.name || "Streaming",
+            };
+          }catch{return null;}
+        })
+      );
+
+      CINE_CACHE.series = {
+        newReleases,
+        upcoming: withSeasons.filter(s=>s&&s.seasons>1).slice(0,6)
+      };
+    }
+  }catch(e){
+    console.error("TMDB error:",e);
+    CINE_CACHE[tab]={error:true,msg:e.message};
+  }
+  CINE_LOADING[tab]=false; render();
+}
+
+function renderCine(){
+  const d=CINE_CACHE[cineTab];
+  const loading=CINE_LOADING[cineTab];
+  const tabs=[{k:"cinema",l:"🎬 Cinéma",c:"#E8A000"},{k:"series",l:"📺 Séries",c:"#E50914"}];
+  const tc=tabs.find(t=>t.k===cineTab);
+  if(!d&&!loading) fetchCine(cineTab);
+
+  const searchCard = cineSearchResults ? `
+    <div class="stitle"><div class="bar" style="background:${tc.c};"></div><span style="color:${tc.c};">🔍 Résultats pour "${cineSearch}"</span></div>
+    ${cineSearchResults.length===0?`<div style="color:var(--sub);font-size:13px;text-align:center;padding:20px;">Aucun résultat trouvé</div>`:""}
+    ${cineSearchResults.map(m=>`<div style="background:rgba(255,255,255,0.03);border:1px solid ${tc.c}22;border-top:2px solid ${tc.c};border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;">
+      ${m.poster?`<img src="${m.poster}" style="width:56px;height:84px;border-radius:8px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:56px;height:84px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;">${cineTab==="cinema"?"🎬":"📺"}</div>`}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.title}</div>
+        <div style="font-size:11px;color:${tc.c};margin-bottom:6px;">⭐ ${m.score} · 📅 ${m.date}</div>
+        <div style="font-size:12px;color:#7A9BBB;line-height:1.4;">${m.synopsis}</div>
+      </div>
+    </div>`).join("")}
+  ` : "";
+
+  return`<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:${tc.c};"></div><span style="color:${tc.c};">🎬 Ciné & Séries</span></div>
+    <button onclick="CINE_CACHE['${cineTab}']=null;fetchCine('${cineTab}');" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:6px 12px;color:#5A7A9A;font-size:13px;" class="press">↻</button>
+  </div>
+
+  <!-- Onglets -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    ${tabs.map(t=>`<button onclick="cineTab='${t.k}';cineSearch='';cineSearchResults=null;if(!CINE_CACHE['${t.k}']&&!CINE_LOADING['${t.k}'])fetchCine('${t.k}');else render();" style="flex:1;padding:10px;border-radius:12px;background:${cineTab===t.k?t.c+"22":"rgba(255,255,255,0.04)"};border:1px solid ${cineTab===t.k?t.c+"66":"rgba(255,255,255,0.08)"};color:${cineTab===t.k?t.c:"#3A5A7A"};font-weight:700;font-size:13px;" class="press">${t.l}</button>`).join("")}
+  </div>
+
+  <!-- Barre de recherche -->
+  <div style="position:relative;margin-bottom:16px;">
+    <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none;">🔍</div>
+    <input
+      type="search"
+      placeholder="${cineTab==="cinema"?"Rechercher un film...":"Rechercher une série..."}"
+      value="${cineSearch}"
+      oninput="onCineSearch(this.value)"
+      style="padding-left:40px;padding-right:${cineSearch?"36px":"12px"};background:rgba(255,255,255,0.06);border:1px solid ${tc.c}44;border-radius:14px;font-size:14px;width:100%;color:var(--text);"
+    />
+    ${cineSearch?`<button onclick="cineSearch='';cineSearchResults=null;render();" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A7A9A;font-size:18px;line-height:1;" class="press">×</button>`:""}
+  </div>
+
+  <!-- Chargement recherche -->
+  ${cineSearchLoading?`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:30px 0;"><div class="spinner" style="width:24px;height:24px;border-width:2px;"></div><div style="font-size:13px;color:var(--sub);">Recherche...</div></div>`:""}
+
+  <!-- Résultats de recherche -->
+  ${!cineSearchLoading?searchCard:""}
+
+  <!-- Contenu normal si pas de recherche -->
+  ${!cineSearch&&loading?`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:60px 0;"><div class="spinner"></div><div style="font-size:13px;color:var(--sub);">Chargement depuis TMDB...</div></div>`:""}
+  ${!cineSearch&&d&&d.error?`<div class="card" style="text-align:center;"><div style="font-size:32px;margin-bottom:10px;">⚠️</div><div style="color:#C8102E;font-size:14px;margin-bottom:6px;">Impossible de charger</div><div style="color:var(--sub);font-size:11px;margin-bottom:14px;">${d.msg||"Erreur réseau"}</div><button onclick="CINE_CACHE['${cineTab}']=null;fetchCine('${cineTab}');" class="btn">Réessayer</button></div>`:""}
+
+  ${!cineSearch&&d&&!d.error&&cineTab==="cinema"?`
+  <div class="stitle"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">🎥 En salle en France</span></div>
+  ${(d.nowPlaying||[]).map(f=>`<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(232,160,0,0.15);border-top:2px solid #E8A000;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;">
+    ${f.poster?`<img src="${f.poster}" style="width:56px;height:84px;border-radius:8px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:56px;height:84px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;">🎬</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.title}</div>
+      <div style="font-size:11px;color:#E8A000;margin-bottom:6px;">⭐ ${f.score} · 📅 ${f.date}</div>
+      <div style="font-size:12px;color:#7A9BBB;line-height:1.4;">${f.synopsis}</div>
+    </div>
+  </div>`).join("")}
+  <div class="stitle" style="margin-top:4px;"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">🔜 Prochainement</span></div>
+  ${(d.upcoming||[]).map(f=>`<div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.05);margin-bottom:8px;">
+    ${f.poster?`<img src="${f.poster}" style="width:36px;height:54px;border-radius:6px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="font-size:20px;">🎬</div>`}
+    <div style="flex:1;"><div style="font-size:14px;font-weight:700;">${f.title}</div></div>
+    <div style="font-size:12px;color:#E8A000;font-weight:600;flex-shrink:0;">${f.date}</div>
+  </div>`).join("")}`:""}
+
+  ${!cineSearch&&d&&!d.error&&cineTab==="series"?`
+  <div class="stitle"><div class="bar" style="background:#E50914;"></div><span style="color:#E50914;">🆕 Séries en cours</span></div>
+  ${(d.newReleases||[]).map(s=>{const pc=PLATFORM_COLORS[s.platform]||"#888";return`<div style="background:rgba(255,255,255,0.03);border:1px solid ${pc}22;border-top:2px solid ${pc};border-radius:12px;padding:14px;margin-bottom:10px;display:flex;gap:12px;">
+    ${s.poster?`<img src="${s.poster}" style="width:56px;height:84px;border-radius:8px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:56px;height:84px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;">📺</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;gap:6px;">
+        <div style="font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">${s.title}</div>
+        <span style="font-size:10px;background:${pc}22;color:${pc};border-radius:6px;padding:2px 7px;font-weight:700;flex-shrink:0;">${s.platform}</span>
+      </div>
+      <div style="font-size:11px;color:${pc};margin-bottom:6px;">⭐ ${s.score} · 📅 ${s.date}</div>
+      <div style="font-size:12px;color:#7A9BBB;line-height:1.4;">${s.synopsis}</div>
+    </div>
+  </div>`;}).join("")}
+  <div class="stitle" style="margin-top:4px;"><div class="bar" style="background:#E50914;"></div><span style="color:#E50914;">🔜 Prochaines saisons</span></div>
+  ${(d.upcoming||[]).map(s=>`<div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(229,9,20,0.15);margin-bottom:8px;">
+    ${s.poster?`<img src="${s.poster}" style="width:44px;height:66px;border-radius:8px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:44px;height:66px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;">📺</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.title}</div>
+      <div style="font-size:12px;color:#E50914;margin:3px 0;">Saison ${s.nextSeason} · ⭐ ${s.score}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span style="font-size:11px;background:rgba(229,9,20,0.15);color:#E50914;border-radius:6px;padding:2px 7px;font-weight:700;">${s.seasons} saisons</span>
+        <span style="font-size:11px;color:var(--sub);">📅 ${s.date}</span>
+      </div>
+    </div>
+  </div>`).join("")}`:""}
+</div>`;
+}
+
+
+function renderExtra(){
+  return`<div class="section">
+  <div class="pills">${[{k:"pomodoro",l:"🏒 Pomodoro"},{k:"habits",l:"🌱 Habitudes"},{k:"journal",l:"📖 Journal"},{k:"favs",l:"💙 Favoris"}].map(t=>`<div class="pill${state.extraTab===t.k?" active":""}" onclick="state.extraTab='${t.k}';render();">${t.l}</div>`).join("")}</div>
+  ${state.extraTab==="pomodoro"?renderPom():""}
+  ${state.extraTab==="habits"?renderHabits():""}
+  ${state.extraTab==="journal"?renderJournal():""}
+  ${state.extraTab==="favs"?renderFavs():""}
+</div>`;
+}
+
+function renderPom(){
+  const p=state.pom,mm=String(Math.floor(p.secs/60)).padStart(2,"0"),ss=String(p.secs%60).padStart(2,"0");
+  const r=52,circ=2*Math.PI*r,base=p.mode==="work"?25*60:5*60,pct=1-p.secs/base;
+  const col=p.mode==="work"?"var(--accent)":"#2E7D32";
+  return`<div class="card" style="text-align:center;">
+  <div class="stitle" style="justify-content:center;"><div class="bar" style="background:${col};"></div><span style="color:${col};">${p.mode==="work"?"🏒 Concentration":"☕ Pause"}</span></div>
+  <div class="pom-circle">
+    <svg width="130" height="130" style="transform:rotate(-90deg);">
+      <circle cx="65" cy="65" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+      <circle id="pom-arc" cx="65" cy="65" r="${r}" fill="none" stroke="${col}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct)}" style="transition:stroke-dashoffset 1s linear;"/>
+    </svg>
+    <div class="pom-time"><div class="pt" style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;line-height:1;">${mm}:${ss}</div><div style="font-size:10px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;">${p.mode==="work"?"TRAVAIL":"PAUSE"}</div></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:14px;"><button class="btn" onclick="togglePom()" style="flex:1;background:linear-gradient(135deg,${col},${col}88);">${p.running?"⏸ Pause":"▶ Go"}</button><button onclick="resetPom()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:13px 16px;color:#666;font-weight:700;font-size:14px;" class="press">↺</button></div>
+  <div style="display:flex;justify-content:center;gap:6px;margin-bottom:8px;">${Array.from({length:Math.min(p.sessions,8)},()=>`<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>`).join("")}</div>
+  <div style="font-size:12px;color:var(--sub);">${p.sessions} session${p.sessions>1?"s":""} complétée${p.sessions>1?"s":""}</div>
+  <div style="display:flex;justify-content:center;gap:8px;margin-top:12px;">${[{l:"25 min",v:1500,m:"work"},{l:"5 min",v:300,m:"break"},{l:"15 min",v:900,m:"break"}].map(pr=>`<button onclick="setPomDur(${pr.v},'${pr.m}')" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:5px 10px;color:#5A7A9A;font-size:11px;font-weight:600;" class="press">${pr.l}</button>`).join("")}</div>
+</div>`;
+}
+
+function renderHabits(){
+  const tc=state.checked[todayStr]||{},done=state.habits.filter(h=>tc[h.id]).length,pct=state.habits.length?(done/state.habits.length)*100:0;
+  const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().slice(0,10);});
+  return`<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🌱 Habitudes</span></div><button onclick="state.showHabitForm=!state.showHabitForm;render();" style="background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.4);border-radius:8px;padding:5px 10px;color:var(--accent);font-size:11px;font-weight:700;" class="press">+</button></div>
+  <div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:12px;color:var(--sub);">Aujourd'hui</span><span style="font-size:12px;font-weight:700;color:var(--accent);">${done}/${state.habits.length}</span></div><div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%"></div></div></div>
+  <div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;">${last7.map(ds=>{const dc=state.checked[ds]||{},cnt=state.habits.filter(h=>dc[h.id]).length,isT=ds===todayStr,dw=new Date(ds+"T12:00:00").getDay();return`<div style="text-align:center;min-width:36px;"><div style="font-size:9px;color:var(--sub);font-weight:700;margin-bottom:4px;">${DAYS[dw===0?6:dw-1]}</div><div style="width:32px;height:32px;border-radius:10px;background:${cnt===state.habits.length?"linear-gradient(135deg,var(--accent),var(--accent2))":cnt>0?"rgba(255,255,255,0.08)":"rgba(255,255,255,0.03)"};border:${isT?"2px solid rgba(200,16,46,0.5)":"2px solid transparent"};display:flex;align-items:center;justify-content:center;margin:0 auto;"><span style="font-size:11px;font-weight:700;color:${cnt===state.habits.length?"#fff":cnt>0?"var(--accent)":"var(--sub)"};">${cnt}</span></div></div>`;}).join("")}</div>
+  ${state.habits.map(h=>{const d2=!!(tc[h.id]);return`<div class="habit-item press" onclick="toggleHabit('${h.id}')" style="background:${d2?"rgba(255,255,255,0.06)":"rgba(255,255,255,0.03)"};border:1px solid ${d2?h.color+"44":"rgba(255,255,255,0.06)"};">
+    <div style="width:32px;height:32px;border-radius:10px;background:${d2?`linear-gradient(135deg,${h.color},${h.color}88)`:"rgba(255,255,255,0.06)"};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${h.icon}</div>
+    <span style="flex:1;font-size:14px;color:${d2?"var(--text)":"#7A9BBB"};font-weight:${d2?"600":"400"};">${h.label}</span>
+    <div style="width:22px;height:22px;border-radius:6px;background:${d2?h.color:"transparent"};border:2px solid ${d2?h.color:"rgba(255,255,255,0.15)"};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${d2?`<span style="font-size:12px;color:#fff;">✓</span>`:""}</div>
+  </div>`;}).join("")}
+  ${state.showHabitForm?`<div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.08);"><div style="display:flex;gap:8px;margin-bottom:10px;"><input value="${state.newHabit.icon}" oninput="state.newHabit.icon=this.value" style="width:50px;text-align:center;font-size:20px;"/><input value="${state.newHabit.label}" placeholder="Nouvelle habitude..." oninput="state.newHabit.label=this.value" style="flex:1;"/></div>${cpick(state.newHabit.color,"c=>state.newHabit.color=c")}<button class="btn" onclick="addHabit()">Ajouter</button></div>`:""}
+</div>`;
+}
+
+function renderJournal(){
+  const j=state.journal[state.selDay]||{};
+  const last7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);return d.toISOString().slice(0,10);}).reverse();
+  return`<div class="card">
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">📖 Journal de bord</span></div>
+  <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;">${last7.map(ds=>{const d=new Date(ds+"T12:00:00"),has=!!state.journal[ds],isSel=ds===state.selDay,dw=d.getDay()===0?6:d.getDay()-1;return`<div onclick="selDay('${ds}')" style="min-width:42px;text-align:center;padding:8px 6px;border-radius:12px;cursor:pointer;background:${isSel?"linear-gradient(135deg,var(--accent),var(--accent2))":ds===todayStr?"rgba(255,255,255,0.06)":"rgba(255,255,255,0.03)"};border:${isSel?"none":"1px solid rgba(255,255,255,0.06)"};flex-shrink:0;" class="press"><div style="font-size:9px;color:${isSel?"rgba(255,255,255,0.7)":"var(--sub)"};font-weight:700;">${DAYS[dw]}</div><div style="font-size:15px;font-weight:700;color:${isSel?"#fff":ds===todayStr?"var(--accent)":"#7A9BBB"};">${d.getDate()}</div>${has&&!isSel?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);margin:2px auto 0;"></div>`:""}</div>`;}).join("")}</div>
+  <div style="font-size:11px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Mood du jour</div>
+  <div class="mood-grid">${MOODS.map(m=>`<button class="mood-btn press" onclick="state.journalMood=state.journalMood==='${m.id}'?null:'${m.id}';render();" style="${state.journalMood===m.id?`color:${m.color};border-color:${m.color};background:${m.color}22;`:""}"><span style="font-size:16px;">${m.icon}</span>${m.label}</button>`).join("")}</div>
+  ${state.journalMood?`<div style="font-size:12px;color:${MOODS.find(m=>m.id===state.journalMood).color};font-style:italic;font-family:Georgia,serif;margin-bottom:12px;">${MOODS.find(m=>m.id===state.journalMood).q}</div>`:""}
+  <textarea placeholder="Comment s'est passée cette journée ?" rows="5" oninput="state.journalDraft=this.value" class="mb" style="resize:none;line-height:1.6;font-family:Georgia,serif;">${state.journalDraft||j.text||""}</textarea>
+  <button class="btn" onclick="saveJournal()">💾 Sauvegarder</button>
+</div>`;
+}
+
+function renderFavs(){
+  if(!state.favs.length)return`<div class="card" style="text-align:center;"><div style="font-size:13px;color:var(--sub);padding:20px 0;">Appuie sur 💙 dans les citations pour en sauvegarder.</div></div>`;
+  return`<div><div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">💙 Favorites (${state.favs.length})</span></div>${state.favs.map(idx=>{const q=QUOTES[idx];const ac=q.c==="S"?"#C8102E":q.c==="I"?"#0057A8":"#8B6A9A";return`<div style="background:${ac}12;border:1px solid ${ac}25;border-radius:12px;padding:12px 14px;margin-bottom:8px;"><div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;font-family:Georgia,serif;margin-bottom:6px;">${q.t}</div><div style="font-size:11px;color:${ac};font-weight:600;">— ${q.a}</div></div>`;}).join("")}</div>`;
+}
+
+// ── JOURNAL COMPLET ───────────────────────────────────────────────────────────
+const JOURNAL_TAGS_PRESET = ["#sport","#travail","#amour","#famille","#santé","#hockey","#voyage","#musique","#lecture","#autre"];
+const MOOD_QUOTE_MAP = {
+  fire:"«\u00a0Aujourd'hui, la glace est à toi. Tout est possible.\u00a0»",
+  focus:"«\u00a0Tête baissée. Un shift à la fois. Tu y arrives.\u00a0»",
+  chill:"«\u00a0Le calme avant la tempête. Profite du moment.\u00a0»",
+  tired:"«\u00a0Même les champions ont des jours durs. Repose-toi.\u00a0»",
+  love:"«\u00a0La haine, c'est de l'amour qui porte un masque.\u00a0»",
+  game:"«\u00a0Ce soir, tout se joue sur la glace. Sois prêt.\u00a0»",
+};
+
+function renderJournalFull(){
+  // PIN check
+  if(state.journalLocked && state.journalPin !== ""){
+    return`<div class="section">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:20px;animation:fadeIn 0.3s ease;">
+      <div style="font-size:48px;">🔒</div>
+      <div style="font-size:16px;font-weight:700;color:var(--text);">Journal privé</div>
+      <div style="font-size:13px;color:var(--sub);">Entre ton code PIN pour accéder</div>
+      <div style="display:flex;gap:10px;margin:8px 0;">
+        ${[1,2,3,4].map(i=>`<div style="width:14px;height:14px;border-radius:50%;background:${state.journalPinInput.length>=i?"var(--accent)":"rgba(255,255,255,0.1)"};border:2px solid ${state.journalPinInput.length>=i?"var(--accent)":"rgba(255,255,255,0.2)"};transition:all 0.2s;"></div>`).join("")}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:220px;">
+        ${[1,2,3,4,5,6,7,8,9,"✕",0,"✓"].map(k=>`<button onclick="pinInput('${k}')" class="press" style="background:${k==="✓"?"var(--accent)":k==="✕"?"rgba(200,16,46,0.15)":"rgba(255,255,255,0.06)"};border:1px solid ${k==="✓"?"var(--accent)":k==="✕"?"rgba(200,16,46,0.3)":"rgba(255,255,255,0.1)"};border-radius:14px;padding:16px;font-size:18px;font-weight:700;color:${k==="✕"?"#C8102E":"var(--text)"};cursor:pointer;">${k}</button>`).join("")}
+      </div>
+      ${state.journalPinInput.length>0&&state.journalPinInput!==state.journalPin?`<div style="font-size:12px;color:#C8102E;">Code incorrect</div>`:""}
+    </div>`;
+  }
+
+  // Fullscreen write mode
+  if(state.journalFullscreen){
+    const j=state.journal[state.selDay]||{};
+    const m=MOODS.find(m=>m.id===state.journalMood);
+    return`<div style="position:fixed;inset:0;background:var(--bg);z-index:9990;display:flex;flex-direction:column;padding:16px;animation:fadeIn 0.2s ease;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <button onclick="state.journalFullscreen=false;render();" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:8px 12px;color:#A8C8E8;font-size:16px;">←</button>
+        <div style="flex:1;font-size:13px;color:var(--sub);">${fmt(state.selDay)}</div>
+        <button onclick="saveJournal();state.journalFullscreen=false;" class="btn press" style="width:auto;padding:8px 16px;margin:0;">💾 Sauver</button>
+      </div>
+      ${m?`<div style="font-size:12px;color:${m.color};font-style:italic;font-family:Georgia,serif;margin-bottom:12px;text-align:center;">${MOOD_QUOTE_MAP[m.id]||m.q}</div>`:""}
+      <textarea oninput="state.journalDraft=this.value" placeholder="Écris librement..." style="flex:1;background:transparent;border:none;color:var(--text);font-size:16px;line-height:1.8;resize:none;outline:none;font-family:Georgia,serif;">${state.journalDraft||j.text||""}</textarea>
+      <div style="font-size:11px;color:#2A4060;text-align:right;margin-top:8px;">${(state.journalDraft||j.text||"").length} caractères</div>
+    </div>`;
+  }
+
+  const j=state.journal[state.selDay]||{};
+  const allEntries=Object.values(state.journal).filter(e=>e&&e.text).sort((a,b)=>b.date.localeCompare(a.date));
+
+  // Stats
+  const streak=(()=>{
+    let s=0,d=new Date();
+    while(true){const ds=d.toISOString().slice(0,10);if(state.journal[ds]?.text){s++;d.setDate(d.getDate()-1);}else break;}
+    return s;
+  })();
+  const moodCounts=MOODS.map(m=>({...m,count:Object.values(state.journal).filter(e=>e.mood===m.id).length}));
+  const totalWords=allEntries.reduce((acc,e)=>acc+(e.text||"").split(/\s+/).filter(Boolean).length,0);
+
+  return`<div class="section">
+  <!-- Header tabs -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">📖 Journal de bord</span></div>
+    <div style="display:flex;gap:6px;">
+      ${state.journalPin?`<button onclick="state.journalLocked=true;state.journalPinInput='';render();" class="press" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:5px 8px;color:#5A7A9A;font-size:12px;">🔒</button>`:""}
+      <button onclick="state.journalFullscreen=true;state.journalDraft=state.journal[state.selDay]?.text||'';render();" class="press" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:5px 8px;color:#5A7A9A;font-size:12px;">⛶</button>
+    </div>
+  </div>
+
+  <!-- Sub tabs -->
+  <div class="pills" style="margin-bottom:16px;">
+    ${[{k:"write",l:"✏️ Écrire"},{k:"history",l:"📚 Historique"},{k:"stats",l:"📊 Stats"}].map(t=>`<div class="pill${state.journalTab===t.k?"":""}" onclick="state.journalTab='${t.k}';render();" style="background:${state.journalTab===t.k?"rgba(200,16,46,0.2)":"rgba(255,255,255,0.04)"};border-color:${state.journalTab===t.k?"rgba(200,16,46,0.4)":"rgba(255,255,255,0.07)"};color:${state.journalTab===t.k?"var(--accent)":"#3A5A7A"};cursor:pointer;">${t.l}</div>`).join("")}
+  </div>
+
+  <!-- ── WRITE TAB ── -->
+  ${state.journalTab==="write"?`
+  <!-- Date selector -->
+  <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;">
+    ${Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);const has=!!state.journal[ds]?.text;const isSel=ds===state.selDay;const dw=d.getDay()===0?6:d.getDay()-1;return`<div onclick="state.selDay='${ds}';state.journalDraft=state.journal['${ds}']?.text||'';state.journalMood=state.journal['${ds}']?.mood||null;state.journalEmoji=state.journal['${ds}']?.emoji||'';state.journalTags=state.journal['${ds}']?.tags||[];render();" style="min-width:44px;text-align:center;padding:8px 6px;border-radius:12px;cursor:pointer;background:${isSel?"linear-gradient(135deg,var(--accent),var(--accent2))":"rgba(255,255,255,0.03)"};border:${isSel?"none":"1px solid rgba(255,255,255,0.06)"};flex-shrink:0;" class="press"><div style="font-size:9px;color:${isSel?"rgba(255,255,255,0.7)":"var(--sub)"};font-weight:700;">${DAYS[dw]}</div><div style="font-size:16px;font-weight:700;color:${isSel?"#fff":ds===todayStr?"var(--accent)":"#7A9BBB"};">${d.getDate()}</div>${has&&!isSel?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);margin:2px auto 0;"></div>`:"<div style='height:6px;'></div>"}</div>`;}).reverse().join("")}
+  </div>
+
+  <!-- Mood -->
+  <div style="font-size:10px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;font-weight:700;">Mood du jour</div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:${state.journalMood?"4px":"12px"};">
+    ${MOODS.map(m=>`<button onclick="state.journalMood=state.journalMood==='${m.id}'?null:'${m.id}';render();" class="press" style="background:${state.journalMood===m.id?m.color+"33":"rgba(255,255,255,0.04)"};border:1px solid ${state.journalMood===m.id?m.color+"66":"rgba(255,255,255,0.07)"};border-radius:10px;padding:6px 10px;display:flex;align-items:center;gap:5px;color:${state.journalMood===m.id?m.color:"#5A7A9A"};font-size:11px;font-weight:600;cursor:pointer;"><span style="font-size:15px;">${m.icon}</span>${m.label}</button>`).join("")}
+  </div>
+  ${state.journalMood?`<div style="font-size:12px;color:${MOODS.find(m=>m.id===state.journalMood)?.color};font-style:italic;font-family:Georgia,serif;margin-bottom:12px;padding:8px 12px;background:${MOODS.find(m=>m.id===state.journalMood)?.color}15;border-radius:10px;border-left:3px solid ${MOODS.find(m=>m.id===state.journalMood)?.color};">${MOOD_QUOTE_MAP[state.journalMood]}</div>`:""}
+
+  <!-- Emoji illustratif -->
+  <div style="font-size:10px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;font-weight:700;">Emoji du jour</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+    ${["🏒","❤️","🔥","💪","😴","✈️","🎵","📚","🌧️","☀️","🌙","🎉","💔","🤝","🏆"].map(e=>`<button onclick="state.journalEmoji=state.journalEmoji==='${e}'?'':'${e}';render();" class="press" style="font-size:20px;background:${state.journalEmoji===e?"rgba(200,16,46,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${state.journalEmoji===e?"rgba(200,16,46,0.4)":"rgba(255,255,255,0.07)"};border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;">${e}</button>`).join("")}
+  </div>
+
+  <!-- Tags -->
+  <div style="font-size:10px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;font-weight:700;">Tags</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+    ${JOURNAL_TAGS_PRESET.map(t=>`<button onclick="toggleJournalTag('${t}');" class="press" style="font-size:11px;font-weight:700;border-radius:16px;padding:4px 10px;background:${(state.journalTags||[]).includes(t)?"var(--accent)22":"rgba(255,255,255,0.04)"};border:1px solid ${(state.journalTags||[]).includes(t)?"var(--accent)55":"rgba(255,255,255,0.08)"};color:${(state.journalTags||[]).includes(t)?"var(--accent)":"#3A5A7A"};cursor:pointer;">${t}</button>`).join("")}
+  </div>
+  <!-- Tag perso -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <input placeholder="+ Tag perso..." value="${state.journalTagInput||""}" oninput="state.journalTagInput=this.value" onkeydown="if(event.key==='Enter')addJournalTag();" style="flex:1;font-size:13px;" class="mb"/>
+    <button onclick="addJournalTag();" class="press" style="background:var(--accent)22;border:1px solid var(--accent)44;border-radius:12px;padding:0 14px;color:var(--accent);font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;">+</button>
+  </div>
+  ${(state.journalTags||[]).filter(t=>!JOURNAL_TAGS_PRESET.includes(t)).length>0?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">${(state.journalTags||[]).filter(t=>!JOURNAL_TAGS_PRESET.includes(t)).map(t=>`<span style="font-size:11px;font-weight:700;border-radius:16px;padding:4px 10px;background:var(--accent2)22;border:1px solid var(--accent2)44;color:var(--accent2);display:flex;align-items:center;gap:4px;">${t}<button onclick="removeJournalTag('${t}');" style="background:none;border:none;color:var(--accent2);cursor:pointer;font-size:13px;line-height:1;padding:0;">×</button></span>`).join("")}</div>`:""}
+
+  <!-- Texte -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase;font-weight:700;">Entrée ${state.selDay===todayStr?"du jour":"— "+fmt(state.selDay)}</div>
+    <button onclick="state.journalFullscreen=true;state.journalDraft=state.journal[state.selDay]?.text||'';render();" class="press" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:4px 10px;color:#5A7A9A;font-size:11px;cursor:pointer;">⛶ Plein écran</button>
+  </div>
+  <textarea oninput="state.journalDraft=this.value" placeholder="Comment s'est passée cette journée ?&#10;&#10;Écris librement, sans jugement..." rows="6" style="resize:none;line-height:1.7;font-family:Georgia,serif;font-size:14px;width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--accent)22;border-radius:14px;padding:14px;color:var(--text);outline:none;margin-bottom:6px;">${state.journalDraft||j.text||""}</textarea>
+  <div style="font-size:11px;color:#2A4060;text-align:right;margin-bottom:10px;">${(state.journalDraft||j.text||"").split(/\s+/).filter(Boolean).length} mots</div>
+  <button class="btn" onclick="saveJournalFull();">💾 Sauvegarder</button>
+  `:""}
+
+  <!-- ── HISTORY TAB ── -->
+  ${state.journalTab==="history"?`
+  <div style="font-size:12px;color:var(--sub);margin-bottom:14px;">${allEntries.length} entrée${allEntries.length>1?"s":""} rédigée${allEntries.length>1?"s":""}</div>
+  ${allEntries.length===0?`<div style="text-align:center;padding:40px;color:var(--sub);font-size:13px;font-style:italic;">Aucune entrée encore.<br>Commence à écrire !</div>`:""}
+  ${allEntries.map(e=>{
+    const m=MOODS.find(m=>m.id===e.mood);
+    const wordCount=(e.text||"").split(/\s+/).filter(Boolean).length;
+    const preview=(e.text||"").slice(0,80)+((e.text||"").length>80?"...":"");
+    return`<div onclick="state.selDay='${e.date}';state.journalDraft=e.text||'';state.journalMood=e.mood||null;state.journalEmoji=e.emoji||'';state.journalTags=e.tags||[];state.journalTab='write';render();" class="press" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${m?m.color:"var(--sub)"};border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        ${e.emoji?`<span style="font-size:18px;">${e.emoji}</span>`:""}
+        ${m?`<span style="font-size:14px;">${m.icon}</span>`:""}
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${fmt(e.date)}</div>
+          ${(e.tags||[]).length>0?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;">${(e.tags||[]).map(t=>`<span style="font-size:9px;background:var(--accent)15;color:var(--accent);border-radius:8px;padding:1px 6px;font-weight:700;">${t}</span>`).join("")}</div>`:""}
+        </div>
+        <div style="font-size:11px;color:var(--sub);flex-shrink:0;">${wordCount} mots</div>
+      </div>
+      <div style="font-size:12px;color:#5A7A9A;line-height:1.5;font-style:italic;font-family:Georgia,serif;">${preview}</div>
+    </div>`;
+  }).join("")}`:""}
+
+  <!-- ── STATS TAB ── -->
+  ${state.journalTab==="stats"?`
+  <!-- Streak & totaux -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div style="background:rgba(200,16,46,0.12);border:1px solid rgba(200,16,46,0.25);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent);line-height:1;">${streak}</div>
+      <div style="font-size:11px;color:var(--sub);">🔥 jours consécutifs</div>
+    </div>
+    <div style="background:rgba(0,87,168,0.12);border:1px solid rgba(0,87,168,0.25);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--accent2);line-height:1;">${allEntries.length}</div>
+      <div style="font-size:11px;color:var(--sub);">📖 entrées totales</div>
+    </div>
+    <div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#FFD700;line-height:1;">${totalWords}</div>
+      <div style="font-size:11px;color:var(--sub);">✍️ mots écrits</div>
+    </div>
+    <div style="background:rgba(221,160,221,0.1);border:1px solid rgba(221,160,221,0.2);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:#DDA0DD;line-height:1;">${allEntries.length>0?Math.round(totalWords/allEntries.length):0}</div>
+      <div style="font-size:11px;color:var(--sub);">📝 mots/entrée</div>
+    </div>
+  </div>
+
+  <!-- Humeurs -->
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">Humeurs les plus fréquentes</span></div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px;">
+    ${moodCounts.filter(m=>m.count>0).sort((a,b)=>b.count-a.count).length===0?`<div style="color:var(--sub);font-size:13px;text-align:center;padding:8px;">Pas encore de données</div>`:""}
+    ${moodCounts.filter(m=>m.count>0).sort((a,b)=>b.count-a.count).map(m=>{
+      const pct=allEntries.length>0?Math.round((m.count/allEntries.length)*100):0;
+      return`<div style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="font-size:16px;">${m.icon}</span>
+          <span style="font-size:13px;font-weight:600;color:var(--text);flex:1;">${m.label}</span>
+          <span style="font-size:12px;color:${m.color};font-weight:700;">${m.count}× (${pct}%)</span>
+        </div>
+        <div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;">
+          <div style="width:${pct}%;height:100%;background:${m.color};border-radius:3px;transition:width 0.5s;"></div>
+        </div>
+      </div>`;
+    }).join("")}
+  </div>
+
+  <!-- Tags les plus utilisés -->
+  <div class="stitle"><div class="bar" style="background:var(--accent2);"></div><span style="color:var(--accent2);">Tags les plus utilisés</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    ${(()=>{
+      const tagCount={};
+      allEntries.forEach(e=>(e.tags||[]).forEach(t=>{tagCount[t]=(tagCount[t]||0)+1;}));
+      const sorted=Object.entries(tagCount).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      if(sorted.length===0)return`<div style="color:var(--sub);font-size:13px;">Pas encore de tags</div>`;
+      return sorted.map(([t,c])=>`<span style="font-size:12px;font-weight:700;border-radius:16px;padding:5px 12px;background:var(--accent2)15;border:1px solid var(--accent2)33;color:var(--accent2);">${t} <span style="opacity:0.6;">${c}</span></span>`).join("");
+    })()}
+  </div>
+
+  <!-- PIN settings -->
+  <div class="stitle" style="margin-top:16px;"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">🔒 Code PIN journal</span></div>
+  <div class="card">
+    <div style="font-size:13px;color:var(--sub);margin-bottom:12px;line-height:1.5;">Protège ton journal avec un code à 4 chiffres. Laisse vide pour désactiver.</div>
+    <div style="display:flex;gap:8px;">
+      <input type="password" maxlength="4" placeholder="Nouveau PIN (4 chiffres)" oninput="state.journalPinInput=this.value" style="flex:1;font-size:14px;letter-spacing:4px;text-align:center;"/>
+      <button onclick="setJournalPin();" class="press" style="background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:0 14px;color:#FFD700;font-weight:700;cursor:pointer;flex-shrink:0;">OK</button>
+    </div>
+    ${state.journalPin?`<div style="font-size:11px;color:#2A4060;margin-top:8px;text-align:center;">PIN actif ✓ · <button onclick="state.journalPin='';state.journalLocked=false;LS.set('oti_jpin','');render();" style="background:none;border:none;color:#C8102E;cursor:pointer;font-size:11px;">Supprimer le PIN</button></div>`:""}
+  </div>
+  `:""}
+</div>`;
+}
+
+function saveJournalFull(){
+  if(!state.journalDraft.trim()&&!state.journalMood&&!state.journalEmoji)return;
+  state.journal[state.selDay]={
+    text:state.journalDraft,
+    mood:state.journalMood,
+    emoji:state.journalEmoji,
+    tags:[...state.journalTags],
+    date:state.selDay
+  };
+  vib([10,5,10]);playSound("done");toast("💾 Journal sauvegardé","","var(--accent)");save();render();
+}
+function toggleJournalTag(t){
+  if(!state.journalTags)state.journalTags=[];
+  state.journalTags=state.journalTags.includes(t)?state.journalTags.filter(x=>x!==t):[...state.journalTags,t];
+  render();
+}
+function addJournalTag(){
+  const t=(state.journalTagInput||"").trim();
+  if(!t)return;
+  const tag=t.startsWith("#")?t:`#${t}`;
+  if(!state.journalTags)state.journalTags=[];
+  if(!state.journalTags.includes(tag))state.journalTags.push(tag);
+  state.journalTagInput="";render();
+}
+function removeJournalTag(t){state.journalTags=(state.journalTags||[]).filter(x=>x!==t);render();}
+function pinInput(k){
+  if(k==="✕"){state.journalPinInput="";render();return;}
+  if(k==="✓"){
+    if(state.journalPinInput===state.journalPin){state.journalLocked=false;state.journalPinInput="";render();}
+    else{vib([100,50,100]);render();}
+    return;
+  }
+  if(state.journalPinInput.length<4){state.journalPinInput+=String(k);render();}
+}
+function setJournalPin(){
+  const p=(state.journalPinInput||"").replace(/\D/g,"").slice(0,4);
+  if(p&&p.length<4){toast("⚠️","Le PIN doit avoir 4 chiffres","#FFA500");return;}
+  state.journalPin=p;state.journalLocked=p!=="";state.journalPinInput="";
+  LS.set("oti_jpin",p);toast(p?"🔒 PIN activé":"🔓 PIN supprimé","","var(--accent)");render();
+}
+
+
+// ── HUB "PLUS" ────────────────────────────────────────────────────────────────
+function renderMore(){
+  const items=[
+    {icon:"🎬",label:"Ciné & Séries",desc:"Films et séries du moment",section:"cine",color:"#E8A000"},
+    {icon:"🎵",label:"Musique",desc:"Playlists et artistes",section:"music",color:"#1DB954"},
+    {icon:"📋",label:"Notes",desc:"Tes notes rapides",section:"notes",color:"#0057A8"},
+    {icon:"💫",label:"Wishlist",desc:"À voir, lire, écouter",section:"wishlist",color:"#DDA0DD"},
+    {icon:"🏆",label:"Objectifs",desc:"Tes goals à long terme",section:"goals",color:"#FFD700"},
+    {icon:"❝",label:"Citations HR",desc:"Toutes les citations",section:"quotes",color:"#C8102E"},
+    {icon:"✨",label:"Pomodoro & Habitudes",desc:"Focus et routines",section:"extra",color:"#A8C8E8"},
+  ];
+  return`<div class="section">
+  <div style="text-align:center;padding:16px 0 20px;">
+    <div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:28px;letter-spacing:4px;color:var(--accent);">DÉCOUVRIR</div>
+    <div style="font-size:11px;color:var(--sub);letter-spacing:2px;text-transform:uppercase;">Toutes les fonctionnalités</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    ${items.map(it=>`<button onclick="showSection('${it.section}')" class="press" style="background:${it.color}12;border:1px solid ${it.color}30;border-top:3px solid ${it.color};border-radius:16px;padding:16px 12px;text-align:left;cursor:pointer;">
+      <div style="font-size:26px;margin-bottom:8px;">${it.icon}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">${it.label}</div>
+      <div style="font-size:11px;color:var(--sub);line-height:1.3;">${it.desc}</div>
+    </button>`).join("")}
+  </div>
+</div>`;
+}
+
+// ── WISHLIST ──────────────────────────────────────────────────────────────────
+function renderWishlist(){
+  const filtered=state.wishFilter==="all"?state.wishlist:state.wishlist.filter(w=>w.cat===state.wishFilter);
+  const done=state.wishlist.filter(w=>w.done).length;
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showSection('more')" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 10px;color:#A8C8E8;font-size:14px;">←</button>
+    <div class="stitle" style="margin-bottom:0;flex:1;"><div class="bar" style="background:#DDA0DD;"></div><span style="color:#DDA0DD;">💫 Wishlist</span></div>
+    <span style="font-size:12px;color:var(--sub);">${done}/${state.wishlist.length} ✓</span>
+  </div>
+  <button class="btn" onclick="state.showWishForm=!state.showWishForm;render();" style="margin-bottom:12px;background:linear-gradient(135deg,#8B4AAA,#DDA0DD);">${state.showWishForm?"✕ Fermer":"+ Ajouter"}</button>
+  ${state.showWishForm?`<div class="card" style="border-color:#DDA0DD44;animation:slideUp 0.2s ease;">
+    <input placeholder="Titre..." value="${state.newWish.title}" oninput="state.newWish.title=this.value" class="mb"/>
+    <select onchange="state.newWish.cat=this.value" class="mb">${WISH_CATS.map(c=>`<option value="${c.id}"${state.newWish.cat===c.id?" selected":""}>${c.icon} ${c.label}</option>`).join("")}</select>
+    <textarea placeholder="Note (optionnel)..." rows="2" oninput="state.newWish.note=this.value" class="mb" style="resize:none;">${state.newWish.note}</textarea>
+    <button class="btn" onclick="addWish();" style="background:linear-gradient(135deg,#8B4AAA,#DDA0DD);">Ajouter</button>
+  </div>`:""}
+  <div class="pills">
+    <div class="pill${state.wishFilter==="all"?" active":""}" onclick="state.wishFilter='all';render();" style="${state.wishFilter==="all"?"background:rgba(221,160,221,0.2);border-color:rgba(221,160,221,0.4);color:#DDA0DD;":""}">Tous</div>
+    ${WISH_CATS.map(c=>`<div class="pill${state.wishFilter===c.id?" active":""}" onclick="state.wishFilter='${c.id}';render();" style="${state.wishFilter===c.id?`background:${c.color}22;border-color:${c.color}44;color:${c.color};`:""}">${c.icon} ${c.label}</div>`).join("")}
+  </div>
+  ${filtered.length===0?`<div style="text-align:center;padding:30px;color:var(--sub);font-size:13px;">Rien ici encore !</div>`:""}
+  ${filtered.map(w=>{const wc=WISH_CATS.find(c=>c.id===w.cat)||WISH_CATS[0];return`<div style="background:${wc.color}10;border:1px solid ${wc.color}25;border-left:4px solid ${w.done?wc.color+"88":wc.color};border-radius:14px;padding:14px;margin-bottom:10px;opacity:${w.done?0.6:1};">
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div onclick="toggleWish(${w.id})" class="press" style="width:22px;height:22px;border-radius:6px;border:2px solid ${wc.color};background:${w.done?wc.color:"transparent"};display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;">${w.done?`<span style="font-size:12px;color:#fff;">✓</span>`:""}</div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:700;text-decoration:${w.done?"line-through":"none"};color:var(--text);">${w.title}</div>${w.note?`<div style="font-size:12px;color:var(--sub);margin-top:3px;">${w.note}</div>`:""}<span style="font-size:10px;background:${wc.color}22;color:${wc.color};border-radius:6px;padding:2px 7px;font-weight:700;margin-top:5px;display:inline-block;">${wc.icon} ${wc.label}</span></div>
+      <button onclick="deleteWish(${w.id})" class="press" style="background:none;border:none;color:rgba(200,16,46,0.5);font-size:18px;cursor:pointer;flex-shrink:0;">×</button>
+    </div>
+  </div>`;}).join("")}
+</div>`;
+}
+
+// ── OBJECTIFS ─────────────────────────────────────────────────────────────────
+function renderGoals(){
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showSection('more')" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 10px;color:#A8C8E8;font-size:14px;">←</button>
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">🏆 Objectifs</span></div>
+  </div>
+  <button class="btn" onclick="state.showGoalForm=!state.showGoalForm;render();" style="margin-bottom:12px;background:linear-gradient(135deg,#B8860B,#FFD700);color:#07080F;">${state.showGoalForm?"✕ Fermer":"+ Nouvel objectif"}</button>
+  ${state.showGoalForm?`<div class="card" style="border-color:#FFD70044;animation:slideUp 0.2s ease;">
+    <input placeholder="Titre de l'objectif..." value="${state.newGoal.title}" oninput="state.newGoal.title=this.value" class="mb" style="font-size:15px;font-weight:700;"/>
+    <textarea placeholder="Description..." rows="2" oninput="state.newGoal.desc=this.value" class="mb" style="resize:none;">${state.newGoal.desc}</textarea>
+    <input type="date" value="${state.newGoal.deadline}" oninput="state.newGoal.deadline=this.value" class="mb"/>
+    ${cpick(state.newGoal.color,"c=>state.newGoal.color=c")}
+    <div style="margin-bottom:10px;">
+      <div style="font-size:11px;color:var(--sub);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Étapes</div>
+      ${(state.newGoal.steps||[]).map((s,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="flex:1;font-size:13px;color:var(--text);background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:8px;">${s}</div><button onclick="removeGoalStep(${i})" style="background:none;border:none;color:rgba(200,16,46,0.6);font-size:16px;cursor:pointer;">×</button></div>`).join("")}
+      <div style="display:flex;gap:8px;"><input placeholder="+ Étape..." value="${state.newStepText||""}" oninput="state.newStepText=this.value" onkeydown="if(event.key==='Enter')addGoalStep();" style="flex:1;font-size:13px;margin-bottom:0;"/><button onclick="addGoalStep();" class="press" style="background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:0 14px;color:#FFD700;font-weight:700;cursor:pointer;flex-shrink:0;">+</button></div>
+    </div>
+    <button class="btn" onclick="addGoal();" style="background:linear-gradient(135deg,#B8860B,#FFD700);color:#07080F;">Créer</button>
+  </div>`:""}
+  ${state.goals.length===0?`<div style="text-align:center;padding:40px;color:var(--sub);font-size:13px;font-style:italic;">Aucun objectif encore.<br>Qu'est-ce que tu veux accomplir ?</div>`:""}
+  ${state.goals.map(g=>{const done=(g.steps||[]).filter(s=>s.done).length,total=(g.steps||[]).length,pct=total?Math.round((done/total)*100):0;const daysLeft=g.deadline?Math.ceil((new Date(g.deadline+"T12:00:00")-new Date())/(1000*60*60*24)):null;
+  return`<div style="background:${g.color}12;border:1px solid ${g.color}30;border-top:3px solid ${g.color};border-radius:16px;padding:16px;margin-bottom:12px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+      <div style="flex:1;"><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;">${g.title}</div>${g.desc?`<div style="font-size:12px;color:var(--sub);">${g.desc}</div>`:""}</div>
+      <button onclick="deleteGoal(${g.id})" class="press" style="background:none;border:none;color:rgba(200,16,46,0.5);font-size:18px;cursor:pointer;flex-shrink:0;">×</button>
+    </div>
+    ${total>0?`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:11px;color:var(--sub);">Progression</span><span style="font-size:11px;font-weight:700;color:${g.color};">${done}/${total} · ${pct}%</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,0.08);overflow:hidden;"><div style="width:${pct}%;height:100%;background:${g.color};transition:width 0.4s;border-radius:3px;"></div></div></div>`:""}
+    <div style="display:flex;flex-direction:column;gap:6px;">${(g.steps||[]).map((s,i)=>`<div onclick="toggleGoalStep(${g.id},${i})" class="press" style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:10px;cursor:pointer;"><div style="width:18px;height:18px;border-radius:5px;background:${s.done?g.color:"transparent"};border:2px solid ${g.color};flex-shrink:0;display:flex;align-items:center;justify-content:center;">${s.done?`<span style="font-size:10px;color:#fff;">✓</span>`:""}</div><span style="font-size:13px;color:${s.done?"var(--sub)":"var(--text)"};text-decoration:${s.done?"line-through":"none"};">${s.text}</span></div>`).join("")}</div>
+    ${daysLeft!==null?`<div style="font-size:11px;color:${daysLeft<7?"#C8102E":daysLeft<30?"#FFD700":"var(--sub)"};margin-top:8px;">📅 ${daysLeft>0?`${daysLeft} jours restants`:"Délai dépassé !"}</div>`:""}
+  </div>`;}).join("")}
+</div>`;
+}
+
+// ── MUSIQUE ───────────────────────────────────────────────────────────────────
+function renderMusic(){
+  const m=state.music;
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showSection('more')" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 10px;color:#A8C8E8;font-size:14px;">←</button>
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#1DB954;"></div><span style="color:#1DB954;">🎵 Musique</span></div>
+  </div>
+  <div class="pills" style="margin-bottom:14px;">
+    ${[{k:"playlists",l:"🎵 Playlists"},{k:"artists",l:"🎤 Artistes"}].map(t=>`<div class="pill${state.musicTab===t.k?" active":""}" onclick="state.musicTab='${t.k}';render();" style="${state.musicTab===t.k?"background:rgba(29,185,84,0.2);border-color:rgba(29,185,84,0.4);color:#1DB954;":""}">${t.l}</div>`).join("")}
+  </div>
+  ${state.musicTab==="playlists"?`
+  <button class="btn" onclick="state.showMusicForm=state.showMusicForm==='pl'?false:'pl';render();" style="margin-bottom:12px;background:linear-gradient(135deg,#0D7A3A,#1DB954);">${state.showMusicForm==="pl"?"✕ Fermer":"+ Playlist"}</button>
+  ${state.showMusicForm==="pl"?`<div class="card" style="border-color:#1DB95444;animation:slideUp 0.2s ease;">
+    <input placeholder="Nom de la playlist..." value="${state.newPlaylist.name}" oninput="state.newPlaylist.name=this.value" class="mb"/>
+    <input placeholder="Lien Spotify/Apple Music..." value="${state.newPlaylist.link}" oninput="state.newPlaylist.link=this.value" class="mb"/>
+    ${cpick(state.newPlaylist.color,"c=>state.newPlaylist.color=c")}
+    <button class="btn" onclick="addPlaylist();" style="background:linear-gradient(135deg,#0D7A3A,#1DB954);">Ajouter</button>
+  </div>`:""}
+  ${(m.playlists||[]).length===0?`<div style="text-align:center;padding:30px;color:var(--sub);font-size:13px;">Aucune playlist encore</div>`:""}
+  ${(m.playlists||[]).map(p=>`<div style="background:${p.color}15;border:1px solid ${p.color}30;border-left:4px solid ${p.color};border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+    <div style="width:44px;height:44px;border-radius:10px;background:${p.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎵</div>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:700;">${p.name}</div>${p.link?`<a href="${p.link}" style="font-size:11px;color:${p.color};" onclick="event.stopPropagation()">Ouvrir →</a>`:""}</div>
+    <button onclick="deletePlaylist(${p.id})" class="press" style="background:none;border:none;color:rgba(200,16,46,0.5);font-size:18px;cursor:pointer;">×</button>
+  </div>`).join("")}
+  `:""}
+  ${state.musicTab==="artists"?`
+  <button class="btn" onclick="state.showMusicForm=state.showMusicForm==='ar'?false:'ar';render();" style="margin-bottom:12px;background:linear-gradient(135deg,#0D7A3A,#1DB954);">${state.showMusicForm==="ar"?"✕ Fermer":"+ Artiste"}</button>
+  ${state.showMusicForm==="ar"?`<div class="card" style="border-color:#1DB95444;animation:slideUp 0.2s ease;">
+    <input placeholder="Nom de l'artiste..." value="${state.newArtist.name}" oninput="state.newArtist.name=this.value" class="mb"/>
+    <input placeholder="Genre (Pop, Rock, Hip-hop...)" value="${state.newArtist.genre}" oninput="state.newArtist.genre=this.value" class="mb"/>
+    <button class="btn" onclick="addArtist();" style="background:linear-gradient(135deg,#0D7A3A,#1DB954);">Ajouter</button>
+  </div>`:""}
+  ${(m.artists||[]).length===0?`<div style="text-align:center;padding:30px;color:var(--sub);font-size:13px;">Aucun artiste encore</div>`:""}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    ${(m.artists||[]).map(a=>`<div style="background:rgba(29,185,84,0.08);border:1px solid rgba(29,185,84,0.2);border-radius:14px;padding:14px;position:relative;">
+      <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0D7A3A,#1DB954);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px;">🎤</div>
+      <div style="font-size:13px;font-weight:700;">${a.name}</div>
+      <div style="font-size:11px;color:#1DB954;">${a.genre}</div>
+      <button onclick="deleteArtist(${a.id})" class="press" style="position:absolute;top:8px;right:8px;background:none;border:none;color:rgba(200,16,46,0.5);font-size:16px;cursor:pointer;">×</button>
+    </div>`).join("")}
+  </div>
+  `:""}
+</div>`;
+}
+
+// ── TOUTES LES CITATIONS ──────────────────────────────────────────────────────
+function renderQuotes(){
+  const fc=state.quotesFilter||"all";
+  const filtered=fc==="all"?QUOTES:QUOTES.filter(q=>q.c===fc);
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showSection('more')" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 10px;color:#A8C8E8;font-size:14px;">←</button>
+    <div class="stitle" style="margin-bottom:0;flex:1;"><div class="bar" style="background:#C8102E;"></div><span style="color:#C8102E;">❝ Citations</span></div>
+    <span style="font-size:12px;color:var(--sub);">${QUOTES.length} · 💙 ${state.favs.length}</span>
+  </div>
+  <div class="pills" style="margin-bottom:14px;">
+    ${[{k:"all",l:"Toutes"},{k:"S",l:"🍁 Shane"},{k:"I",l:"🐻 Ilya"},{k:"B",l:"🏒 Les deux"}].map(f=>`<div class="pill${fc===f.k?" active":""}" onclick="state.quotesFilter='${f.k}';render();" style="${fc===f.k?"background:rgba(200,16,46,0.2);border-color:rgba(200,16,46,0.4);color:#C8102E;":""}">${f.l}</div>`).join("")}
+  </div>
+  ${filtered.map(q=>{const ac=q.c==="S"?"#C8102E":q.c==="I"?"#0057A8":"#8B6A9A";const ri=QUOTES.indexOf(q);const isFav=state.favs.includes(ri);
+  return`<div style="background:${ac}10;border:1px solid ${ac}25;border-left:3px solid ${ac};border-radius:12px;padding:14px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:14px;">${q.c==="S"?"🍁":q.c==="I"?"🐻":"🏒"}</span>
+      <span style="font-size:10px;color:${ac};font-weight:700;letter-spacing:1px;">${q.a}</span>
+      <button onclick="toggleFav(${ri})" class="press" style="margin-left:auto;background:none;border:none;font-size:16px;opacity:${isFav?1:0.25};cursor:pointer;">💙</button>
+    </div>
+    <div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic;font-family:Georgia,serif;">${q.t}</div>
+  </div>`;}).join("")}
+</div>`;
+}
+
+// ── MÉTÉO ─────────────────────────────────────────────────────────────────────
+async function fetchWeather(){
+  if(state.weatherLoading||state.weather)return;
+  state.weatherLoading=true;render();
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
+    const {latitude:lat,longitude:lon}=pos.coords;
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m&timezone=auto`);
+    const d=await r.json();
+    state.weather={temp:Math.round(d.current.temperature_2m),code:d.current.weathercode,wind:Math.round(d.current.windspeed_10m),icon:WEATHER_ICONS[d.current.weathercode]||"🌡️"};
+  }catch(e){state.weather={error:true};}
+  state.weatherLoading=false;render();
+}
+
+// ── ACTIONS NOUVELLES ─────────────────────────────────────────────────────────
+function addWish(){const w=state.newWish;if(!w.title.trim())return;state.wishlist.push({id:Date.now(),...w});vib([10,5,10]);state.newWish={title:"",cat:"book",note:"",done:false};state.showWishForm=false;LS.set("oti_wish",state.wishlist);render();}
+function toggleWish(id){state.wishlist=state.wishlist.map(w=>w.id===id?{...w,done:!w.done}:w);vib([8]);playSound("check");LS.set("oti_wish",state.wishlist);render();}
+function deleteWish(id){vib([20]);state.wishlist=state.wishlist.filter(w=>w.id!==id);LS.set("oti_wish",state.wishlist);render();}
+function addGoalStep(){const t=(state.newStepText||"").trim();if(!t)return;state.newGoal.steps=[...(state.newGoal.steps||[]),t];state.newStepText="";render();}
+function removeGoalStep(i){state.newGoal.steps=state.newGoal.steps.filter((_,j)=>j!==i);render();}
+function addGoal(){const g=state.newGoal;if(!g.title.trim())return;state.goals.push({id:Date.now(),title:g.title,desc:g.desc,color:g.color,deadline:g.deadline,steps:(g.steps||[]).map(s=>({text:s,done:false}))});vib([10,5,10]);state.newGoal={title:"",desc:"",color:"#C8102E",steps:[],deadline:""};state.newStepText="";state.showGoalForm=false;LS.set("oti_goals",state.goals);render();}
+function deleteGoal(id){vib([20]);state.goals=state.goals.filter(g=>g.id!==id);LS.set("oti_goals",state.goals);render();}
+function toggleGoalStep(gid,si){state.goals=state.goals.map(g=>g.id===gid?{...g,steps:g.steps.map((s,i)=>i===si?{...s,done:!s.done}:s)}:g);vib([8]);playSound("check");LS.set("oti_goals",state.goals);render();}
+function addPlaylist(){const p=state.newPlaylist;if(!p.name.trim())return;const m={...state.music};m.playlists=[...(m.playlists||[]),{id:Date.now(),...p}];state.music=m;vib([10,5,10]);state.newPlaylist={name:"",link:"",color:"#1DB954"};state.showMusicForm=false;LS.set("oti_music",state.music);render();}
+function deletePlaylist(id){const m={...state.music};m.playlists=(m.playlists||[]).filter(p=>p.id!==id);state.music=m;vib([20]);LS.set("oti_music",state.music);render();}
+function addArtist(){const a=state.newArtist;if(!a.name.trim())return;const m={...state.music};m.artists=[...(m.artists||[]),{id:Date.now(),...a}];state.music=m;vib([10,5,10]);state.newArtist={name:"",genre:""};state.showMusicForm=false;LS.set("oti_music",state.music);render();}
+function deleteArtist(id){const m={...state.music};m.artists=(m.artists||[]).filter(a=>a.id!==id);state.music=m;vib([20]);LS.set("oti_music",state.music);render();}
+
+function renderSettings(){
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <button onclick="showSection('dashboard')" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:8px 12px;color:#A8C8E8;font-size:16px;" class="press">←</button>
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">⚙️ Paramètres</span></div>
+  </div>
+
+  <!-- THÈME -->
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🎨 Thème</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">${Object.entries(THEMES).map(([k,t])=>`<button onclick="setTheme('${k}')" style="background:${state.theme===k?t.a+"22":"rgba(255,255,255,0.04)"};border:${state.theme===k?`1.5px solid ${t.a}`:"1px solid rgba(255,255,255,0.08)"};border-radius:14px;padding:14px 12px;text-align:left;" class="press"><div style="width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,${t.a},${t.b});margin-bottom:8px;"></div><div style="font-size:13px;font-weight:700;color:var(--text);">${t.n}</div></button>`).join("")}</div>
+
+  <!-- SONS -->
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🔊 Sons</span></div>
+  <div class="toggle-row press" onclick="toggleSound()">
+    <div style="font-size:22px;">${state.sound?"🔊":"🔇"}</div>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Sons de l'appli</div><div style="font-size:12px;color:var(--sub);">Bruitage de patins, sirène, mélodie</div></div>
+    <div class="toggle" style="background:${state.sound?"linear-gradient(90deg,var(--accent),var(--accent2))":"rgba(255,255,255,0.1)"};">
+      <div class="knob" style="left:${state.sound?"23px":"3px"};"></div>
+    </div>
+  </div>
+
+  <!-- À PROPOS -->
+  <div class="stitle" style="margin-top:8px;"><div class="bar" style="background:var(--sub);"></div><span style="color:var(--sub);">ℹ️ À propos</span></div>
+  <div class="card"><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;letter-spacing:3px;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 70%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;">ON THE ICE</div><div style="font-size:12px;color:var(--sub);line-height:1.6;">Inspiré de <em style="color:#A8C8E8;">Heated Rivalry</em> de Casey McQuiston.<br/>Shane & Ilya forever. 🏒💙</div></div>
+</div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function showSection(v){state.view=v;render();}
+function nextQuote(){state.quoteIdx=(state.quoteIdx+1)%QUOTES.length;vib([5]);render();}
+function toggleFav(i){state.favs=state.favs.includes(i)?state.favs.filter(x=>x!==i):[...state.favs,i];save();render();}
+function quickCheck(id){vib([8]);playSound("check");state.tasks=state.tasks.map(t=>t.id===id?{...t,done:!t.done}:t);if(state.tasks.find(t=>t.id===id).done&&state.tasks.filter(t=>!t.done).length===0)setTimeout(()=>{playSound("done");vib([100,50,100]);},100);save();render();}
+function toggleTask(id){quickCheck(id);}
+function toggleTaskForm(){state.showTaskForm=!state.showTaskForm;render();}
+function addTask(){const nt=state.newTask;if(!nt.text.trim())return;state.tasks.push({id:Date.now(),text:nt.text,done:false,priority:nt.priority,color:nt.color,category:nt.category,reminder:nt.reminder});vib([10,5,10]);playSound("check");state.newTask={text:"",priority:"medium",color:"#0057A8",category:"match",reminder:""};state.showTaskForm=false;save();render();}
+function deleteTask(id){vib([20]);state.tasks=state.tasks.filter(t=>t.id!==id);save();render();}
+function toggleNoteForm(){state.showNoteForm=!state.showNoteForm;state.editNoteId=null;render();}
+function addNote(){const nn=state.newNote;if(!nn.title.trim())return;state.notes.push({id:Date.now(),...nn,pinned:false,date:todayStr});vib([10,5,10]);state.newNote={title:"",body:"",color:"#0057A8",category:"match"};state.showNoteForm=false;save();render();}
+function togglePin(id){vib([8]);state.notes=state.notes.map(n=>n.id===id?{...n,pinned:!n.pinned}:n);save();render();}
+function deleteNote(id){vib([20]);state.notes=state.notes.filter(n=>n.id!==id);save();render();}
+function editNote(id){state.editNoteId=id;state.showNoteForm=false;render();}
+function updateEN(k,v){const n=state.notes.find(n=>n.id===state.editNoteId);if(n)n[k]=v;}
+function saveNote(){vib([10,5,10]);state.editNoteId=null;save();render();}
+function selDay(ds){state.selDay=ds;state.journalDraft=state.journal[ds]?.text||"";state.journalMood=state.journal[ds]?.mood||null;state.showEvForm=false;state.editEvId=null;state.showSpecial=false;render();}
+function prevMonth(){if(state.calMonth===0){state.calMonth=11;state.calYear--;}else state.calMonth--;render();}
+function nextMonth(){if(state.calMonth===11){state.calMonth=0;state.calYear++;}else state.calMonth++;render();}
+function prevWeek(){const d=new Date(state.selDay+"T12:00:00");d.setDate(d.getDate()-7);state.selDay=d.toISOString().slice(0,10);render();}
+function nextWeek(){const d=new Date(state.selDay+"T12:00:00");d.setDate(d.getDate()+7);state.selDay=d.toISOString().slice(0,10);render();}
+function setSpecial(id){state.special[state.selDay]=state.special[state.selDay]===id?undefined:id;state.showSpecial=false;save();render();}
+function clearSpecial(){delete state.special[state.selDay];state.showSpecial=false;save();render();}
+function openEvForm(){state.showEvForm=true;state.editEvId=null;state.newEv={title:"",date:state.selDay,tStart:"09:00",tEnd:"10:00",color:"#C8102E",category:"match",reminder:"",repeat:"none",note:"",lieu:""};render();}
+function editEv(id){state.editEvId=id;state.showEvForm=true;// Copie l'événement dans newEv pour l'édition
+const ev=state.events.find(e=>e.id===id);if(ev)state.newEv={...ev};render();}
+function cancelEvForm(){state.showEvForm=false;state.editEvId=null;render();}
+function saveEv(){
+  const ef=state.newEv;
+  if(!ef||!ef.title.trim()){toast("⚠️","Le titre est obligatoire","#FFA500");return;}
+  if(state.editEvId){
+    state.events=state.events.map(e=>e.id===state.editEvId?{...ef,id:state.editEvId}:e);
+  } else {
+    state.events.push({...ef,id:Date.now()});
+  }
+  vib([10,5,10]);toast("✅ Évènement",ef.title,ef.color);
+  state.showEvForm=false;state.editEvId=null;save();render();
+}
+function updateEv(k,v){state.newEv[k]=v;}
+function deleteEv(id){vib([20]);state.events=state.events.filter(e=>e.id!==id);save();render();}
+function togglePom(){state.pom.running=!state.pom.running;if(state.pom.running)playSound("check");render();}
+function resetPom(){state.pom.running=false;state.pom.mode="work";state.pom.secs=25*60;if(window._pt){clearInterval(window._pt);window._pt=null;}render();}
+function setPomDur(v,m){state.pom.running=false;state.pom.mode=m;state.pom.secs=v;if(window._pt){clearInterval(window._pt);window._pt=null;}render();}
+function toggleHabit(hid){vib([8]);playSound("check");if(!state.checked[todayStr])state.checked[todayStr]={};state.checked[todayStr][hid]=!state.checked[todayStr][hid];if(state.habits.filter(h=>state.checked[todayStr][h.id]).length===state.habits.length)setTimeout(()=>{playSound("done");vib([100,50,100]);},100);save();render();}
+function addHabit(){const nh=state.newHabit;if(!nh.label.trim())return;state.habits.push({id:Date.now().toString(),...nh});vib([10,5,10]);state.newHabit={label:"",icon:"⭐",color:"#4ECDC4"};state.showHabitForm=false;save();render();}
+function saveJournal(){if(!state.journalDraft.trim()&&!state.journalMood)return;state.journal[state.selDay]={text:state.journalDraft,mood:state.journalMood,date:state.selDay};vib([10,5,10]);playSound("done");toast("💾 Journal sauvegardé","","var(--accent)");save();render();}
+function setTheme(k){state.theme=k;applyTheme(k);save();render();}
+function toggleSound(){state.sound=!state.sound;save();render();}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+applyTheme(state.theme);
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.style.display="none";},2800);
+
+// Supabase Auth
+// Démarre directement sur l'accueil — toujours
+document.getElementById("nav").style.display="flex";
+applyTheme(state.theme);
+render();
+
+// Mode local — données sauvegardées sur cet appareil
+</script>
+</body>
+</html>
