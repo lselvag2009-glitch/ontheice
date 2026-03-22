@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="On The Ice"/>
+<meta name="theme-color" content="#07080F"/>
+<title>On The Ice</title>
+
+<!-- PWA Manifest -->
+<script>
+(function(){
+  const c=document.createElement('canvas');c.width=192;c.height=192;
+  const x=c.getContext('2d');
+  x.fillStyle='#07080F';x.beginPath();x.roundRect(0,0,192,192,32);x.fill();
+  const g=x.createLinearGradient(0,0,192,192);g.addColorStop(0,'#C8102E');g.addColorStop(1,'#0057A8');
+  x.fillStyle=g;x.font='bold 26px sans-serif';x.textAlign='center';
+  x.fillText('ON THE',96,82);x.fillText('ICE',96,118);
+  x.fillStyle='rgba(168,200,232,0.4)';x.font='12px sans-serif';x.fillText('heated rivalry',96,146);
+  const icon=c.toDataURL('image/png');
+  const m={name:'On The Ice',short_name:'On The Ice',start_url:'./',display:'standalone',background_color:'#07080F',theme_color:'#07080F',icons:[{src:icon,sizes:'192x192',type:'image/png',purpose:'any maskable'}]};
+  const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l);
+  const a=document.createElement('link');a.rel='apple-touch-icon';a.href=icon;document.head.appendChild(a);
+})();
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+:root{--accent:#C8102E;--accent2:#0057A8;--bg:#07080F;--card:rgba(10,22,40,0.85);--text:#E8E8F0;--sub:#3A5A7A;--border:rgba(168,200,232,0.1);}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:Inter,sans-serif;color:var(--text);}
+#app{height:100%;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:#1E3A5F;border-radius:4px;}
+input,textarea,select{font-family:inherit;color-scheme:dark;background:rgba(255,255,255,0.06);border:1px solid rgba(168,200,232,0.15);border-radius:12px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;width:100%;}
+select option{background:#0A1628;}
+button{cursor:pointer;font-family:inherit;border:none;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes splashOut{0%,70%{opacity:1}100%{opacity:0;pointer-events:none;display:none}}
+.press:active{transform:scale(0.96);transition:transform 0.08s;}
+#splash{position:fixed;inset:0;z-index:9999;background:#07080F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:splashOut 0.4s ease 2.2s forwards;}
+.s-title{font-family:'Bebas Neue',Impact,sans-serif;font-size:38px;letter-spacing:5px;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 70%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.s-sub{font-size:10px;letter-spacing:4px;color:#2A4060;text-transform:uppercase;}
+.s-bar{width:140px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+@keyframes fill{from{width:0}to{width:100%}}
+.s-fill{height:100%;background:linear-gradient(90deg,#C8102E,#0057A8);animation:fill 2s ease forwards;}
+#topbar{background:rgba(7,8,15,0.95);border-bottom:1px solid rgba(200,16,46,0.15);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:max(10px,env(safe-area-inset-top,10px));}
+.logo{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;letter-spacing:3px;background:linear-gradient(135deg,#E8C4B8,var(--accent) 45%,var(--accent2) 75%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.logo-sub{font-size:8px;letter-spacing:3px;color:#2A4060;text-transform:uppercase;}
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+#content{padding:14px;max-width:500px;margin:0 auto;padding-bottom:24px;}
+#nav{display:flex;background:rgba(6,10,20,0.97);border-top:1px solid rgba(200,16,46,0.2);padding-bottom:env(safe-area-inset-bottom,8px);flex-shrink:0;}
+#nav button{flex:1;padding:10px 0 6px;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:#3A5A7A;border:none;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s;}
+#nav button.active{color:var(--accent);}
+#nav button .ni{font-size:19px;}
+#nav button .nd{width:18px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;display:none;}
+#nav button.active .nd{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px;animation:slideUp 0.25s ease;}
+.btn{display:block;width:100%;padding:13px;border-radius:14px;font-weight:700;font-size:14px;text-align:center;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 16px rgba(200,16,46,0.25);transition:transform 0.08s;}
+.btn:active{transform:scale(0.96);}
+.btn.b2{background:linear-gradient(135deg,#003580,#0057A8);box-shadow:0 4px 16px rgba(0,87,168,0.25);}
+.btn.outline{background:transparent;border:1.5px solid rgba(200,16,46,0.5);color:var(--accent);box-shadow:none;}
+.stitle{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.stitle .bar{width:3px;height:18px;border-radius:2px;flex-shrink:0;}
+.stitle span{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.tag{font-size:10px;border-radius:6px;padding:2px 8px;font-weight:700;white-space:nowrap;}
+.pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;}
+.pill{border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);color:#3A5A7A;transition:all 0.2s;}
+.pill.active{background:rgba(200,16,46,0.2);border-color:rgba(200,16,46,0.4);color:var(--accent);}
+.pbar-wrap{height:7px;border-radius:4px;overflow:hidden;background:rgba(0,87,168,0.15);}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.5s;}
+.task-item{background:var(--card);border:1px solid rgba(168,200,232,0.07);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.task-check{width:24px;height:24px;border-radius:7px;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;}
+.habit-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all 0.2s;}
+.ev-card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day{text-align:center;padding:6px 2px;border-radius:10px;cursor:pointer;font-size:13px;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid transparent;}
+.cal-day.today{background:rgba(200,16,46,0.12);color:var(--accent);}
+.cal-day.selected{background:linear-gradient(135deg,#8B0000,#C8102E);color:#fff;}
+.mini-day{display:flex;gap:12px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:12px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+.mini-day.sel{background:rgba(200,16,46,0.08);border-color:rgba(200,16,46,0.25);}
+.toggle-row{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:12px;cursor:pointer;}
+.toggle{width:44px;height:24px;border-radius:12px;position:relative;transition:background 0.3s;flex-shrink:0;}
+.toggle .knob{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.4);}
+.quote-card{border-radius:16px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.mood-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.mood-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:7px 10px;display:flex;align-items:center;gap:5px;color:#5A7A9A;font-size:12px;font-weight:600;}
+.cpick{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+.cpick .cc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;}
+.cpick .cc.active{border-color:#fff;}
+.pom-circle{position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.pom-time{position:absolute;text-align:center;}
+#toast-wrap{position:fixed;top:12px;left:16px;right:16px;z-index:9998;pointer-events:none;}
+.toast{background:rgba(10,22,40,0.97);border-radius:12px;padding:11px 15px;margin-bottom:8px;border-left:4px solid var(--accent);animation:slideUp 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.8);}
+.toast .tt{font-weight:700;font-size:13px;}
+.toast .tb{font-size:12px;color:#6A8BAA;}
+.section{animation:fadeIn 0.3s ease;}
+.frow{display:flex;gap:8px;margin-bottom:10px;}
+.frow input,.frow select{margin-bottom:0;}
+.mb{margin-bottom:10px;}
+.spinner{width:32px;height:32px;border:3px solid rgba(200,16,46,0.2);border-top-color:#C8102E;border-radius:50%;animation:spin 0.8s linear infinite;}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;gap:16px;}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="s-title">ON THE ICE</div>
+  <div class="s-sub">heated rivalry</div>
+  <div class="s-bar"><div class="s-fill"></div></div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<div id="app">
+  <div id="topbar">
+    <div>
+      <div class="logo">ON THE ICE</div>
+      <div class="logo-sub">heated rivalry</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="text-align:right;">
+        <div id="today-label" style="font-size:11px;color:var(--sub);"></div>
+        <div id="score-label" style="font-size:10px;font-weight:700;color:var(--accent);"></div>
+      </div>
+      <button onclick="showSection('settings')" style="background:rgba(255,255,255,0.05);border:1px solid rgba(200,16,46,0.3);border-radius:10px;padding:6px 8px;font-size:14px;color:#5A7A9A;" class="press">⚙️</button>
+    </div>
+  </div>
+
+  <div id="scroll"><div id="content"></div></div>
+
+  <div id="nav" style="display:none;">
+    <button onclick="showSection('dashboard')" id="nav-dashboard"><div class="ni">⬡</div><span>Accueil</span><div class="nd"></div></button>
+    <button onclick="showSection('cine')" id="nav-cine"><div class="ni">🎬</div><span>Ciné</span><div class="nd"></div></button>
+    <button onclick="showSection('mylist')" id="nav-mylist"><div class="ni">📋</div><span>Ma liste</span><div class="nd"></div></button>
+    <button onclick="showSection('more')" id="nav-more"><div class="ni">✨</div><span>Plus</span><div class="nd"></div></button>
+  </div>
+</div>
+
+<script>
+// ── DONNÉES ───────────────────────────────────────────────────────────────────
+const todayStr = new Date().toISOString().slice(0,10);
+const DAYS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+const MONTHS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const COLORS = ["#C8102E","#0057A8","#FFD700","#A8C8E8","#96CEB4","#DDA0DD","#FF8C00","#20B2AA"];
+const CATS = [
+  {id:"match",label:"Match",icon:"🏒",color:"#C8102E"},
+  {id:"training",label:"Training",icon:"⛸️",color:"#0057A8"},
+  {id:"perso",label:"Perso",icon:"🏠",color:"#A8C8E8"},
+  {id:"projet",label:"Projet",icon:"🏆",color:"#FFD700"},
+  {id:"autre",label:"Autre",icon:"🌨️",color:"#8B9EC8"},
+];
+const SPECIAL=[{id:"matchday",label:"Match Day",icon:"🏒",color:"#C8102E"},{id:"rest",label:"Repos",icon:"💤",color:"#0057A8"},{id:"travel",label:"Déplacement",icon:"✈️",color:"#FFD700"},{id:"important",label:"Important",icon:"⭐",color:"#DDA0DD"},{id:"birthday",label:"Anniversaire",icon:"🎂",color:"#FF8C00"}];
+const MOODS=[{id:"fire",label:"En feu",icon:"🔥",color:"#C8102E",q:"«\u00a0Aujourd'hui, la glace est à toi.\u00a0»"},{id:"focus",label:"Focus",icon:"🎯",color:"#0057A8",q:"«\u00a0Tête baissée. Un shift à la fois.\u00a0»"},{id:"chill",label:"Chill",icon:"❄️",color:"#A8C8E8",q:"«\u00a0Le calme avant la tempête.\u00a0»"},{id:"tired",label:"Fatigué",icon:"😮‍💨",color:"#8B9EC8",q:"«\u00a0Même les champions ont des jours durs.\u00a0»"},{id:"love",label:"Amoureux",icon:"💙",color:"#DDA0DD",q:"«\u00a0La haine, c'est de l'amour qui porte un masque.\u00a0»"},{id:"game",label:"Game day",icon:"🏒",color:"#FFD700",q:"«\u00a0Ce soir, tout se joue sur la glace.\u00a0»"}];
+const QUOTES=[
+  {t:"«\u00a0Tu me détestes tellement que tu ne peux même pas me regarder.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Sur la glace, on est ennemis. En dehors... je ne sais plus ce qu'on est.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Chaque fois que je te vois, je me rappelle pourquoi je joue à ce sport.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La rivalité s'arrête quand la sirène sonne. Ce qui vient après... c'est une autre histoire.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Tu crois que je ne te vois pas ? Je ne vois que toi.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On était faits pour être dans des camps opposés.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Chaque cicatrice sur cette glace porte ton nom.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La haine, c'est de l'amour qui porte un masque de hockey.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Il n'y a rien de plus dangereux que quelqu'un qui n'a rien à perdre — sauf toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je ne t'ai pas choisi. Mais si j'avais pu choisir, ce serait encore toi.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On ne peut pas être amis. On ne peut pas être ennemis. Alors qu'est-ce qu'on est ?\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Dix ans à jouer la comédie. Et la seule chose réelle, c'était toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je t'en veux d'être aussi impossible à oublier.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Tu joues mieux quand tu es en colère contre moi. Alors je continuerai.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Le problème avec toi, c'est que tu es partout — même quand tu n'es pas là.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Personne ne me regarde comme ça. Même les gens qui m'aiment.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je pensais qu'on était rivaux. Je ne savais pas qu'on était destinés.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Sur cette glace, je suis ton adversaire. Dans ma tête, tu es mon seul public.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0C'est épuisant de te haïr. Ça l'est encore plus de ne pas pouvoir m'en empêcher.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On a passé des années à se blesser. Et maintenant je ne sais plus faire autrement avec toi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Tu es la seule personne qui me regarde comme si j'étais à la fois le problème et la solution.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'aurais dû m'en douter. La seule chose plus dangereuse que toi sur la glace, c'est toi dans ma tête.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je ne suis pas en train de tomber amoureux de toi. Je suis en train de réaliser que je l'étais depuis longtemps.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On s'est battus pendant dix ans. Je suppose qu'on peut apprendre à faire autre chose.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Il y a des gens qui entrent dans ta vie et qui changent la forme de tout ce qui vient après.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Tu sais ce qui est drôle ? Même quand je gagne contre toi, j'ai l'impression de perdre quelque chose.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'ai appris à jouer contre toi. Je n'ai jamais appris à vivre sans cette tension.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Les gens pensent qu'on se déteste. Ils ont tort. On se comprend trop bien pour se détester vraiment.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On dit que les opposés s'attirent. On dit aussi qu'ils se détruisent. Peut-être les deux.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0La première fois que tu m'as regardé comme ça, j'ai su que rien ne serait plus simple.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Je joue mieux quand tu es là. C'est le problème.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0On aurait pu être amis si on s'était rencontrés autrement. Mais je suis content qu'on ne l'ait pas fait.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Quelqu'un qui te pousse à être meilleur, même en étant ton adversaire, c'est rare.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Je n'ai pas besoin que tu m'aimes. J'ai besoin que tu sois là.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0La glace ne ment pas. Et toi non plus, quand tu crois que personne ne regarde.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0On a passé des années à faire semblant que c'était de la haine. C'était plus facile.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Tu es la seule rivale que j'aie jamais voulu garder près de moi.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Même nos silences sont une conversation.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0On se ressemble trop pour être amis. Pas assez pour être ennemis.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Je ne veux pas que tu disparaisses de ma vie. Même si tu restes mon adversaire.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0La rivalité, c'est du respect déguisé en combat.\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Tu m'as rendu meilleur sans jamais essayer de le faire.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0J'aurais préféré ne jamais te rencontrer. J'aurais préféré ne jamais savoir ce que ça fait de te vouloir dans mon camp.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Ce n'est pas de la haine. C'est de l'intensité. Il y a une différence.\u00a0»",a:"Shane Hollander",c:"S"},
+  {t:"«\u00a0Chaque match contre toi est une conversation qu'on ne sait pas avoir autrement.\u00a0»",a:"Ilya Rozanov",c:"I"},
+  {t:"«\u00a0Les meilleures histoires commencent toujours par « on ne pouvait pas se supporter ».\u00a0»",a:"— Rivalité Brûlante",c:"B"},
+  {t:"«\u00a0Je savais que c'était fini quand j'ai commencé à espérer que tu gagnes aussi.\u00a0»",a:"Shane Hollander",c:"S"},
+];
+
+// Wishlist categories
+const WISH_CATS=[
+  {id:"book",label:"Livres",icon:"📚",color:"#DDA0DD"},
+  {id:"series",label:"Séries",icon:"📺",color:"#E50914"},
+  {id:"movie",label:"Films",icon:"🎬",color:"#E8A000"},
+  {id:"music",label:"Musique",icon:"🎵",color:"#1DB954"},
+  {id:"game",label:"Jeux",icon:"🎮",color:"#0057A8"},
+  {id:"other",label:"Autre",icon:"⭐",color:"#FFD700"},
+];
+
+// Objectifs étapes
+const GOAL_STATUS=[
+  {id:"todo",label:"À faire",color:"#3A5A7A"},
+  {id:"progress",label:"En cours",color:"#FFD700"},
+  {id:"done",label:"Terminé",color:"#2E7D32"},
+];
+
+// Météo icônes
+const WEATHER_ICONS={
+  0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",
+  51:"🌦️",53:"🌦️",55:"🌧️",61:"🌧️",63:"🌧️",65:"🌧️",
+  71:"❄️",73:"❄️",75:"❄️",80:"🌦️",81:"🌧️",82:"⛈️",
+  95:"⛈️",96:"⛈️",99:"⛈️"
+};
+const DEFAULT_HABITS=[{id:"water",label:"Hydratation",icon:"💧",color:"#45B7D1"},{id:"sport",label:"Sport",icon:"🏃",color:"#96CEB4"},{id:"read",label:"Lecture",icon:"📖",color:"#DDA0DD"},{id:"sleep",label:"Sommeil 8h",icon:"😴",color:"#8B9EC8"}];
+const THEMES={rival:{n:"Rivalité",a:"#C8102E",b:"#0057A8"},shane:{n:"Shane 🍁",a:"#C8102E",b:"#8B0000"},ilya:{n:"Ilya 🐻",a:"#0057A8",b:"#003580"},night:{n:"Nuit",a:"#DDA0DD",b:"#8B6AAA"}};
+
+// ── STORAGE LOCAL ─────────────────────────────────────────────────────────────
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let state={
+  events: [],
+  habits:  LS.get("oti_habits",DEFAULT_HABITS),
+  checked: LS.get("oti_checked",{}),
+  journal: LS.get("oti_journal",{}),
+  special: LS.get("oti_special",{}),
+  favs:    LS.get("oti_favs",[]),
+  theme:   LS.get("oti_theme","rival"),
+  sound:   LS.get("oti_sound",true),
+  view:"dashboard",extraTab:"pomodoro",
+quoteIdx:Math.floor(Math.random()*QUOTES.length),
+  pom:{secs:25*60,running:false,mode:"work",sessions:0},
+  journalDraft:"",journalMood:null,journalTitle:"",journalPhoto:null,
+  journalTab:"write", // write | history | stats | book
+  journalPin: LS.get("oti_jpin",""),
+  journalLocked: LS.get("oti_jpin","")!=="" ,
+  journalPinInput:"",
+  journalFullscreen:false,
+  journalEmoji:"",
+  journalTags:[],
+  journalTagInput:"",
+  selDay:todayStr,
+  showHabitForm:false,
+  showMusicForm:false,
+  musicTab:"playlists",
+  weatherLoading:false,
+  journalMood:null,
+  journalTitle:"",
+  journalPhoto:null,
+  newArtist:{name:"",genre:""},
+  quotesFilter:"all",
+  // Ciné
+  cineMyList: LS.get("oti_cinelist",[]),
+  cineWatched: LS.get("oti_cinewatched",[]),
+  cineRatings: LS.get("oti_cineratings",{}),
+  cineTab:"movies",
+  myListTab:"towatch",
+  calSub:"movies",
+  detailItem: null,
+  actorItem: null,
+  journalTab:"write",
+  quotesFilter:"all",
+  newHabit:{label:"",icon:"⭐",color:"#4ECDC4"},showHabitForm:false,
+  // Wishlist
+  // Objectifs
+  // Musique
+  music: LS.get("oti_music",{playlists:[],artists:[],currentMood:""}),
+  newPlaylist:{name:"",link:"",color:"#1DB954"},newArtist:{name:"",genre:""},showMusicForm:false,musicTab:"playlists",
+  // Météo
+  weather:null,weatherLoading:false,
+  // Game Day
+  gameDayMode:false,
+};
+
+// ── SONS ──────────────────────────────────────────────────────────────────────
+function playSound(t){
+  if(!state.sound)return;
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(t==="check"){o.frequency.value=880;g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);o.start();o.stop(ctx.currentTime+0.25);}
+    else if(t==="done"){const o2=ctx.createOscillator(),g2=ctx.createGain();o2.connect(g2);g2.connect(ctx.destination);o.frequency.value=523;o2.frequency.value=659;g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);g2.gain.setValueAtTime(0.15,ctx.currentTime+0.1);g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.5);o.start();o.stop(ctx.currentTime+0.4);o2.start(ctx.currentTime+0.1);o2.stop(ctx.currentTime+0.5);}
+    else if(t==="buzz"){o.type="sawtooth";o.frequency.value=120;g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.7);o.start();o.stop(ctx.currentTime+0.7);}
+  }catch(e){}
+}
+function vib(p=[10]){if(navigator.vibrate)navigator.vibrate(p);}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(title,body="",color="var(--accent)"){
+  const w=document.getElementById("toast-wrap");
+  const d=document.createElement("div");
+  d.className="toast";d.style.borderLeftColor=color;
+  d.innerHTML=`<div class="tt">${title}</div>${body?`<div class="tb">${body}</div>`:""}`;
+  w.appendChild(d);setTimeout(()=>d.remove(),3000);
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function cat(id){return CATS.find(c=>c.id===id)||CATS[4];}
+function fmt(ds){return new Date(ds+"T12:00:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});}
+function applyTheme(k){
+  const t=THEMES[k];
+  document.documentElement.style.setProperty("--accent",t.a);
+  document.documentElement.style.setProperty("--accent2",t.b);
+}
+function cpick(val,stateKey){
+  return`<div class="cpick">${COLORS.map(c=>`<div class="cc press${c===val?" active":""}" style="background:${c};box-shadow:${c===val?'0 0 8px '+c:'none'}" onclick="${stateKey}='${c}';render();"></div>`).join("")}</div>`;
+}
+function catSel(val,fn){return`<select onchange="${fn}(this.value)" class="mb">${CATS.map(c=>`<option value="${c.id}"${c.id===val?" selected":""}>${c.icon} ${c.label}</option>`).join("")}</select>`;}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  document.getElementById("today-label").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"}).toUpperCase();
+  document.getElementById("score-label").textContent=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.remove("active"));
+  const nb=document.getElementById(`nav-${state.view}`);if(nb)nb.classList.add("active");
+  document.getElementById("nav").style.display=state.view==="settings"?"none":"flex";
+  document.getElementById("content").innerHTML=renderSection();
+  document.getElementById("scroll").scrollTop=0;
+
+  // Pomodoro timer
+  if(state.pom.running&&!window._pt){
+    window._pt=setInterval(()=>{
+      state.pom.secs--;
+      if(state.pom.secs<=0){
+        clearInterval(window._pt);window._pt=null;state.pom.running=false;
+        playSound("buzz");vib([200,100,200]);
+        if(state.pom.mode==="work"){state.pom.sessions++;state.pom.mode="break";state.pom.secs=5*60;}
+        else{state.pom.mode="work";state.pom.secs=25*60;}
+        render();return;
+      }
+      const mm=String(Math.floor(state.pom.secs/60)).padStart(2,"0"),ss=String(state.pom.secs%60).padStart(2,"0");
+      const pt=document.querySelector(".pom-time .pt");if(pt)pt.textContent=`${mm}:${ss}`;
+      const arc=document.querySelector("#pom-arc");
+      if(arc){const r=52,circ=2*Math.PI*r,base=state.pom.mode==="work"?25*60:5*60,pct=1-state.pom.secs/base;arc.style.strokeDashoffset=circ*(1-pct);}
+    },1000);
+  } else if(!state.pom.running&&window._pt){clearInterval(window._pt);window._pt=null;}
+}
+
+function renderSection(){
+  switch(state.view){
+    case"dashboard":return renderDash();
+    case"cine":     return renderCine();
+    case"detail":   return renderDetail();
+    case"actor":    return renderActor();
+    case"mylist":   return renderMyList();
+    case"mylist":   return renderMyList();
+    case"more":     return renderMore();
+    case"music":    return renderMusic();
+    case"quotes":   return renderQuotes();
+    case"settings": return renderSettings();
+    default:        return renderDash();
+  }
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDash(){
+  const q=QUOTES[state.quoteIdx];
+  const ac=q.c==="S"?"#C8102E":q.c==="I"?"#0057A8":"#8B6A9A";
+  const isFav=state.favs.includes(state.quoteIdx);
+  // Auto-load popular content
+  if(!CINE_CACHE["popular_movies"]&&!CINE_LOADING["popular_movies"]) loadCineSection("popular_movies","/movie/popular?page=1");
+  if(!CINE_CACHE["popular_series"]&&!CINE_LOADING["popular_series"]) loadCineSection("popular_series","/tv/popular?page=1");
+  return`<div class="section">
+  <div style="text-align:center;padding:28px 16px 24px;margin-bottom:8px;">
+    <div style="font-family:'Bebas Neue',Impact,Arial Black,sans-serif;font-size:58px;letter-spacing:6px;line-height:1;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 75%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;">ON THE ICE</div>
+    <div style="font-size:13px;letter-spacing:4px;color:#C8102E;text-transform:uppercase;font-style:italic;margin-bottom:4px;">Heated Rivalry</div>
+    <div style="font-size:11px;letter-spacing:2px;color:#2A4060;text-transform:uppercase;">Rachel Reid</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;">
+      <div style="height:1px;flex:1;max-width:60px;background:linear-gradient(90deg,transparent,#C8102E88);"></div>
+      <span style="font-size:20px;">🏒</span>
+      <div style="height:1px;flex:1;max-width:60px;background:linear-gradient(90deg,#0057A888,transparent);"></div>
+    </div>
+    ${state.weather&&!state.weather.error?`<div style="margin-top:12px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(168,200,232,0.15);border-radius:20px;padding:6px 14px;"><span style="font-size:20px;">${state.weather.icon}</span><span style="font-size:16px;font-weight:700;color:var(--text);">${state.weather.temp}°C</span><span style="font-size:11px;color:var(--sub);">💨 ${state.weather.wind} km/h</span></div>`:`<button onclick="fetchWeather();" class="press" style="margin-top:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(168,200,232,0.15);border-radius:20px;padding:6px 14px;color:var(--sub);font-size:12px;cursor:pointer;">${state.weatherLoading?"🌡️ Chargement...":"🌤️ Voir la météo"}</button>`}
+  </div>
+
+  <!-- Citation -->
+  <div class="quote-card" style="background:linear-gradient(135deg,${ac}18,rgba(7,8,15,0.9));border:1px solid ${ac}33;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${q.c==="S"?"linear-gradient(90deg,#8B0000,#C8102E)":q.c==="I"?"linear-gradient(90deg,#003580,#0057A8)":"linear-gradient(90deg,#C8102E,#0057A8)"};"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="width:26px;height:26px;border-radius:50%;background:${ac};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">${q.c==="S"?"🍁":q.c==="I"?"🐻":"🏒"}</div>
+      <div><div style="font-size:10px;color:${ac};font-weight:700;letter-spacing:2px;text-transform:uppercase;">❝ Rivalité Brûlante</div><div style="font-size:10px;color:var(--sub);">${q.a}</div></div>
+      <button onclick="toggleFav(${state.quoteIdx})" style="margin-left:auto;background:none;border:none;font-size:18px;opacity:${isFav?1:0.3};" class="press">💙</button>
+    </div>
+    <div style="font-size:14px;color:var(--text);line-height:1.7;font-style:italic;font-family:Georgia,serif;margin-bottom:10px;">${q.t}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button onclick="nextQuote()" style="background:none;border:none;font-size:12px;color:var(--sub);" class="press">↻ Suivante</button>
+      <span style="font-size:10px;color:#1A2A3A;">${state.quoteIdx+1}/${QUOTES.length}</span>
+    </div>
+  </div>
+
+  <!-- Accès rapide -->
+  <div class="stitle"><div class="bar" style="background:var(--accent2);"></div><span style="color:var(--accent2);">⚡ Accès rapide</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+    ${[{s:"cine",i:"🎬",l:"Ciné & Séries",c:"#E8A000"},{s:"mylist",i:"📋",l:"Ma liste",c:"#1DB954"},{s:"quotes",i:"❝",l:"Citations HR",c:"#C8102E"},{s:"more",i:"✨",l:"Tout voir",c:"#8B6A9A"}].map(b=>`<button onclick="showSection('${b.s}')" class="press" style="background:${b.c}12;border:1px solid ${b.c}25;border-radius:14px;padding:14px;text-align:left;cursor:pointer;"><span style="font-size:22px;">${b.i}</span><div style="font-size:13px;font-weight:700;color:var(--text);margin-top:6px;">${b.l}</div></button>`).join("")}
+  </div>
+
+  <!-- Films populaires -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">🎬 Films populaires</span></div>
+    <button onclick="showSection('cine')" class="press" style="font-size:11px;color:#E8A000;background:none;border:none;cursor:pointer;">Voir tout →</button>
+  </div>
+  ${CINE_CACHE["popular_movies"]&&!CINE_CACHE["popular_movies"].error?`
+  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;">
+    ${(CINE_CACHE["popular_movies"].results||[]).slice(0,10).map(m=>{
+      const it=formatItem(m,"movie");
+      return`<div onclick="openDetail(${it.id},'movie')" class="press" style="flex-shrink:0;width:88px;cursor:pointer;">
+        ${it.poster?`<img src="${it.poster}" style="width:88px;height:132px;border-radius:10px;object-fit:cover;border:1px solid rgba(232,160,0,0.2);" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:88px;height:132px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:28px;">🎬</div>`}
+        <div style="font-size:10px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);">${it.title}</div>
+        <div style="font-size:10px;color:#E8A000;">⭐ ${it.score}</div>
+      </div>`;
+    }).join("")}
+  </div>`:`<div style="text-align:center;padding:16px;background:rgba(232,160,0,0.06);border:1px dashed rgba(232,160,0,0.2);border-radius:12px;margin-bottom:10px;">
+    <button onclick="loadPopular('popular_movies','/movie/popular?page=1')" class="press" style="background:none;border:none;color:#E8A000;font-size:13px;cursor:pointer;">🎬 Charger les films populaires</button>
+  </div>`}
+
+  <!-- Séries populaires -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#E50914;"></div><span style="color:#E50914;">📺 Séries populaires</span></div>
+    <button onclick="state.cineTab='series';showSection('cine')" class="press" style="font-size:11px;color:#E50914;background:none;border:none;cursor:pointer;">Voir tout →</button>
+  </div>
+  ${CINE_CACHE["popular_series"]&&!CINE_CACHE["popular_series"].error?`
+  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+    ${(CINE_CACHE["popular_series"].results||[]).slice(0,10).map(m=>{
+      const it=formatItem(m,"tv");
+      return`<div onclick="openDetail(${it.id},'tv')" class="press" style="flex-shrink:0;width:88px;cursor:pointer;">
+        ${it.poster?`<img src="${it.poster}" style="width:88px;height:132px;border-radius:10px;object-fit:cover;border:1px solid rgba(229,9,20,0.2);" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:88px;height:132px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:28px;">📺</div>`}
+        <div style="font-size:10px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);">${it.title}</div>
+        <div style="font-size:10px;color:#E50914;">⭐ ${it.score}</div>
+      </div>`;
+    }).join("")}
+  </div>`:`<div style="text-align:center;padding:16px;background:rgba(229,9,20,0.06);border:1px dashed rgba(229,9,20,0.2);border-radius:12px;">
+    <button onclick="loadPopular('popular_series','/tv/popular?page=1')" class="press" style="background:none;border:none;color:#E50914;font-size:13px;cursor:pointer;">📺 Charger les séries populaires</button>
+  </div>`}
+</div>`;
+}
+
+
+// ── CINÉ & SÉRIES ────────────────────────────────────────────────────────────
+const TMDB_KEY = "41014af0f559f6541f2da4cd1c5acc1a";
+const TMDB_BASE = "https://api.themoviedb.org/3";
+const TMDB_IMG_SM = "https://image.tmdb.org/t/p/w200";
+const TMDB_IMG_LG = "https://image.tmdb.org/t/p/w500";
+
+const CINE_CACHE = {};
+const CINE_LOADING = {};
+let cineSearchQuery = "";
+let cineSearchResults = null;
+let cineSearchLoading = false;
+let _cineSearchTimer = null;
+
+async function tmdbFetch(path){
+  const sep = path.includes("?")?"&":"?";
+  const url = `${TMDB_BASE}${path}${sep}api_key=${TMDB_KEY}&language=fr-FR`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(`TMDB ${res.status}`);
+  return res.json();
+}
+
+function loadPopular(key,path){if(!CINE_CACHE[key]&&!CINE_LOADING[key])loadCineSection(key,path);}
+function resetCineCache(){Object.keys(CINE_CACHE).forEach(k=>delete CINE_CACHE[k]);render();}
+async function loadCineSection(key, path){
+  if(CINE_CACHE[key]||CINE_LOADING[key]) return;
+  CINE_LOADING[key]=true; render();
+  try{ CINE_CACHE[key]=await tmdbFetch(path); }
+  catch(e){ CINE_CACHE[key]={error:true,msg:e.message}; }
+  CINE_LOADING[key]=false; render();
+}
+
+function onCineSearch(val){
+  cineSearchQuery=val;
+  clearTimeout(_cineSearchTimer);
+  if(!val.trim()){ cineSearchResults=null; renderCineSearchZone(); return; }
+  _cineSearchTimer=setTimeout(doSearch,500);
+}
+
+function renderCineSearchZone(){
+  // Mise à jour partielle — seulement la zone résultats, sans toucher l'input
+  const zone=document.getElementById("cine-search-results");
+  if(!zone){ render(); return; }
+  if(cineSearchLoading){
+    zone.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:30px;"><div class="spinner" style="width:22px;height:22px;border-width:2px;"></div><div style="font-size:13px;color:var(--sub);">Recherche...</div></div>`;
+    return;
+  }
+  if(!cineSearchResults){ zone.innerHTML=""; return; }
+  const c=state.cineTab==="tv"?"#E50914":"#E8A000";
+  zone.innerHTML=`
+    <div class="stitle"><div class="bar" style="background:${c};"></div><span style="color:${c};">Résultats — "${cineSearchQuery}"</span></div>
+    ${cineSearchResults.length===0?`<div style="color:var(--sub);font-size:13px;text-align:center;padding:20px;">Aucun résultat</div>`:""}
+    ${cineSearchResults.map(m=>cineCard(m)).join("")}
+  `;
+}
+
+async function doSearch(){
+  cineSearchLoading=true; renderCineSearchZone();
+  try{
+    const type=state.cineTab==="series"?"tv":"movie";
+    const d=await tmdbFetch(`/search/${type}?query=${encodeURIComponent(cineSearchQuery)}&page=1`);
+    cineSearchResults=(d.results||[]).slice(0,10).map(m=>formatItem(m,type));
+  }catch(e){ cineSearchResults=[]; }
+  cineSearchLoading=false; renderCineSearchZone();
+}
+
+function formatItem(m,type){
+  return {
+    id: m.id,
+    type: type||"movie",
+    title: m.title||m.name||"",
+    date: m.release_date||m.first_air_date||"",
+    score: m.vote_average?m.vote_average.toFixed(1):"N/A",
+    poster: m.poster_path?TMDB_IMG_SM+m.poster_path:null,
+    poster_lg: m.poster_path?TMDB_IMG_LG+m.poster_path:null,
+    synopsis: m.overview?(m.overview.slice(0,150)+(m.overview.length>150?"...":"")):""
+  };
+}
+
+// Mapping providers TMDB → noms + couleurs
+const PROVIDERS = {
+  8:  {name:"Netflix",    color:"#E50914", icon:"N"},
+  337:{name:"Disney+",    color:"#113CCF", icon:"D+"},
+  119:{name:"Prime Video",color:"#00A8E0", icon:"P"},
+  384:{name:"HBO",        color:"#8B5CF6", icon:"HBO"},
+  350:{name:"Apple TV+",  color:"#A0A0A0", icon:"A"},
+  531:{name:"Paramount+", color:"#0064FF", icon:"P+"},
+  1899:{name:"Max",       color:"#002BE7", icon:"M"},
+  15: {name:"Hulu",       color:"#1CE783", icon:"H"},
+  283:{name:"Crunchyroll",color:"#FF6500", icon:"CR"},
+  56: {name:"Canal+",     color:"#000000", icon:"C+"},
+  190:{name:"OCS",        color:"#FF0050", icon:"OCS"},
+  1773:{name:"Salto",     color:"#00B4D8", icon:"S"},
+};
+
+function getProviders(watchData){
+  const fr = watchData?.results?.FR;
+  const flat = fr?.flatrate||[];
+  const rent = fr?.rent||[];
+  const all = [...flat, ...rent.filter(r=>!flat.find(f=>f.provider_id===r.provider_id))];
+  return all.slice(0,5).map(p=>({
+    id: p.provider_id,
+    name: PROVIDERS[p.provider_id]?.name || p.provider_name,
+    color: PROVIDERS[p.provider_id]?.color || "#888",
+    icon: PROVIDERS[p.provider_id]?.icon || p.provider_name.slice(0,2),
+    logo: p.logo_path ? `https://image.tmdb.org/t/p/w45${p.logo_path}` : null,
+    type: flat.find(f=>f.provider_id===p.provider_id) ? "stream" : "rent"
+  }));
+}
+
+const COUNTRY_NAMES = {
+  FR:"🇫🇷 France",US:"🇺🇸 États-Unis",GB:"🇬🇧 Royaume-Uni",CA:"🇨🇦 Canada",
+  AU:"🇦🇺 Australie",DE:"🇩🇪 Allemagne",JP:"🇯🇵 Japon",IT:"🇮🇹 Italie",
+  ES:"🇪🇸 Espagne",BE:"🇧🇪 Belgique",CH:"🇨🇭 Suisse",NL:"🇳🇱 Pays-Bas",
+  BR:"🇧🇷 Brésil",MX:"🇲🇽 Mexique",NC:"🇳🇨 Nouvelle-Calédonie",
+  PT:"🇵🇹 Portugal",PL:"🇵🇱 Pologne",SE:"🇸🇪 Suède",NO:"🇳🇴 Norvège",
+  DK:"🇩🇰 Danemark",FI:"🇫🇮 Finlande",AR:"🇦🇷 Argentine",
+  IN:"🇮🇳 Inde",KR:"🇰🇷 Corée du Sud",ZA:"🇿🇦 Afrique du Sud",
+};
+
+function getCountries(watchData){
+  const results = watchData?.results || {};
+  return Object.entries(results)
+    .filter(([code, data]) => data.flatrate && data.flatrate.length > 0)
+    .map(([code]) => COUNTRY_NAMES[code] || `🌐 ${code}`)
+    .sort((a,b) => {
+      // France en premier
+      if(a.includes("France")) return -1;
+      if(b.includes("France")) return 1;
+      return a.localeCompare(b);
+    });
+}
+
+async function openDetail(id, type){
+  try{
+    const [detail, credits, similar, watchData] = await Promise.all([
+      tmdbFetch(`/${type}/${id}`),
+      tmdbFetch(`/${type}/${id}/credits`),
+      tmdbFetch(`/${type}/${id}/similar?page=1`),
+      tmdbFetch(`/${type}/${id}/watch/providers`)
+    ]);
+    const cast=(credits.cast||[]).slice(0,8).map(a=>({
+      id:a.id, name:a.name, char:a.character,
+      photo:a.profile_path?TMDB_IMG_SM+a.profile_path:null
+    }));
+    state.detailItem={
+      id, type,
+      title: detail.title||detail.name,
+      tagline: detail.tagline||"",
+      date: detail.release_date||detail.first_air_date||"",
+      score: detail.vote_average?detail.vote_average.toFixed(1):"N/A",
+      votes: detail.vote_count||0,
+      poster: detail.poster_path?TMDB_IMG_LG+detail.poster_path:null,
+      synopsis: detail.overview||"",
+      genres: (detail.genres||[]).map(g=>g.name),
+      runtime: detail.runtime||(detail.episode_run_time?detail.episode_run_time[0]:null),
+      seasons: detail.number_of_seasons||null,
+      episodes: detail.number_of_episodes||null,
+      status: detail.status||"",
+      providers: getProviders(watchData),
+      countries: getCountries(watchData),
+      cast,
+      similar: (similar.results||[]).slice(0,6).map(m=>formatItem(m,type))
+    };
+    showSection("detail");
+  }catch(e){ toast("❌","Impossible de charger","#C8102E"); }
+}
+
+// Cache pour éviter JSON dans les onclick
+const ITEM_CACHE = {};
+function cacheItem(item){ const k=`${item.type}_${item.id}`; ITEM_CACHE[k]=item; return k; }
+function addToListById(k,lt){ if(ITEM_CACHE[k]) addToList(ITEM_CACHE[k],lt); }
+
+function addToList(item, listType){
+  const key = listType==="watched"?"cineWatched":"cineMyList";
+  const lsKey = listType==="watched"?"oti_cinewatched":"oti_cinelist";
+  if(!state[key].find(x=>x.id===item.id&&x.type===item.type)){
+    state[key].push(item);
+    LS.set(lsKey, state[key]);
+    vib([10,5,10]); playSound("done");
+    toast(listType==="watched"?"✅ Ajouté à Déjà vu":"📋 Ajouté à À voir","","#1DB954");
+    render();
+  } else {
+    toast("⚠️","Déjà dans la liste","#FFD700");
+  }
+}
+
+function removeFromList(id, type, listType){
+  const key = listType==="watched"?"cineWatched":"cineMyList";
+  const lsKey = listType==="watched"?"oti_cinewatched":"oti_cinelist";
+  state[key]=state[key].filter(x=>!(x.id===id&&x.type===type));
+  LS.set(lsKey, state[key]); vib([20]); render();
+}
+
+function setRating(id, type, stars){
+  state.cineRatings[`${type}_${id}`]=stars;
+  LS.set("oti_cineratings", state.cineRatings); render();
+}
+
+function getRating(id, type){ return state.cineRatings[`${type}_${id}`]||0; }
+
+function inList(id, type, listType){
+  const key = listType==="watched"?"cineWatched":"cineMyList";
+  return !!(state[key]||[]).find(x=>x.id===id&&x.type===type);
+}
+
+function renderCine(){
+  const tabs=[{k:"movies",l:"🎬 Films"},{k:"series",l:"📺 Séries"},{k:"calendar",l:"📅 Sorties"}];
+  const tc=state.cineTab;
+
+  // Load data if needed
+  if(tc==="movies"&&!CINE_CACHE["now_playing"]) loadCineSection("now_playing","/movie/now_playing?region=FR&page=1");
+  if(tc==="movies"&&!CINE_CACHE["popular_movies"]) loadCineSection("popular_movies","/movie/popular?page=1");
+  if(tc==="series"&&!CINE_CACHE["on_air"]) loadCineSection("on_air","/tv/on_the_air?page=1");
+  if(tc==="series"&&!CINE_CACHE["popular_series"]) loadCineSection("popular_series","/tv/popular?page=1");
+  if(tc==="calendar"&&!CINE_CACHE["upcoming"]) loadCineSection("upcoming","/movie/upcoming?region=FR&page=1");
+
+  const loading = CINE_LOADING[tc==="movies"?"now_playing":tc==="series"?"on_air":"upcoming"];
+
+  return`<div class="section">
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">Ciné & Séries</span></div>
+    <button onclick="resetCineCache()" class="press" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:5px 10px;color:#5A7A9A;font-size:13px;">↻</button>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    ${tabs.map(t=>`<button onclick="state.cineTab='${t.k}';cineSearchQuery='';cineSearchResults=null;render();" class="press" style="flex:1;padding:9px;border-radius:12px;background:${tc===t.k?"rgba(232,160,0,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${tc===t.k?"rgba(232,160,0,0.5)":"rgba(255,255,255,0.08)"};color:${tc===t.k?"#E8A000":"#3A5A7A"};font-weight:700;font-size:11px;cursor:pointer;">${t.l}</button>`).join("")}
+  </div>
+
+  <!-- Search -->
+  <div style="position:relative;margin-bottom:14px;">
+    <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;">🔍</div>
+    <input type="text" id="cine-search-input" placeholder="${tc==="series"?"Rechercher une série...":"Rechercher un film..."}" value="${cineSearchQuery}" oninput="onCineSearch(this.value)" style="padding-left:38px;padding-right:${cineSearchQuery?"34px":"12px"};background:rgba(255,255,255,0.06);border:1px solid rgba(232,160,0,0.3);border-radius:14px;font-size:13px;width:100%;color:var(--text);outline:none;"/>
+    ${cineSearchQuery?`<button onclick="cineSearchQuery='';cineSearchResults=null;render();" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5A7A9A;font-size:18px;cursor:pointer;" class="press">×</button>`:""}
+  </div>
+
+  <!-- Zone résultats recherche (mise à jour partielle) -->
+  <div id="cine-search-results">
+    ${cineSearchLoading?`<div style="display:flex;align-items:center;justify-content:center;gap:10px;padding:30px;"><div class="spinner" style="width:22px;height:22px;border-width:2px;"></div><div style="font-size:13px;color:var(--sub);">Recherche...</div></div>`:""}
+    ${!cineSearchLoading&&cineSearchResults?`
+      <div class="stitle"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">Résultats — "${cineSearchQuery}"</span></div>
+      ${cineSearchResults.length===0?`<div style="color:var(--sub);font-size:13px;text-align:center;padding:20px;">Aucun résultat</div>`:""}
+      ${cineSearchResults.map(m=>cineCard(m)).join("")}
+    `:""}
+  </div>  <!-- Films tab -->
+  ${!cineSearchResults&&tc==="movies"?`
+  ${loading?loadingSpinner():""}
+  ${CINE_CACHE["now_playing"]&&!CINE_CACHE["now_playing"].error?`
+    <div class="stitle"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">🎥 En salle en France</span></div>
+    ${(CINE_CACHE["now_playing"].results||[]).slice(0,6).map(m=>cineCard(formatItem(m,"movie"))).join("")}
+  `:""}
+  ${CINE_CACHE["popular_movies"]&&!CINE_CACHE["popular_movies"].error?`
+    <div class="stitle" style="margin-top:6px;"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">⭐ Films populaires</span></div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+      ${(CINE_CACHE["popular_movies"].results||[]).slice(0,10).map(m=>{const it=formatItem(m,"movie");return`<div onclick="openDetail(${it.id},'movie')" class="press" style="flex-shrink:0;width:90px;cursor:pointer;">${it.poster?`<img src="${it.poster}" style="width:90px;height:135px;border-radius:10px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:90px;height:135px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:28px;">🎬</div>`}<div style="font-size:11px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.title}</div><div style="font-size:10px;color:#E8A000;">⭐ ${it.score}</div></div>`;}).join("")}
+    </div>
+  `:""}
+  `:""}
+
+  <!-- Séries tab -->
+  ${!cineSearchResults&&tc==="series"?`
+  ${loading?loadingSpinner():""}
+  ${CINE_CACHE["on_air"]&&!CINE_CACHE["on_air"].error?`
+    <div class="stitle"><div class="bar" style="background:#E50914;"></div><span style="color:#E50914;">📺 Séries en cours</span></div>
+    ${(CINE_CACHE["on_air"].results||[]).slice(0,6).map(m=>cineCard(formatItem(m,"tv"))).join("")}
+  `:""}
+  ${CINE_CACHE["popular_series"]&&!CINE_CACHE["popular_series"].error?`
+    <div class="stitle" style="margin-top:6px;"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">⭐ Séries populaires</span></div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+      ${(CINE_CACHE["popular_series"].results||[]).slice(0,10).map(m=>{const it=formatItem(m,"tv");return`<div onclick="openDetail(${it.id},'tv')" class="press" style="flex-shrink:0;width:90px;cursor:pointer;">${it.poster?`<img src="${it.poster}" style="width:90px;height:135px;border-radius:10px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:90px;height:135px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:28px;">📺</div>`}<div style="font-size:11px;font-weight:700;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.title}</div><div style="font-size:10px;color:#E50914;">⭐ ${it.score}</div></div>`;}).join("")}
+    </div>
+  `:""}
+  `:""}
+
+  <!-- Calendrier tab -->
+  ${!cineSearchResults&&tc==="calendar"?`
+  ${(()=>{
+    if(!CINE_CACHE["upcoming"]) loadCineSection("upcoming","/movie/upcoming?region=FR&page=1");
+    if(!CINE_CACHE["upcoming_series"]) loadCineSection("upcoming_series","/tv/on_the_air?page=1");
+    return "";
+  })()}
+
+  <!-- Sous-onglets Sorties -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;" id="cal-sub">
+    <button onclick="state.calSub='movies';render();" class="press" style="flex:1;padding:8px;border-radius:10px;background:${(state.calSub||'movies')==='movies'?"rgba(232,160,0,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${(state.calSub||'movies')==='movies'?"rgba(232,160,0,0.5)":"rgba(255,255,255,0.08)"};color:${(state.calSub||'movies')==='movies'?"#E8A000":"#3A5A7A"};font-weight:700;font-size:12px;cursor:pointer;">🎬 Films</button>
+    <button onclick="state.calSub='series';render();" class="press" style="flex:1;padding:8px;border-radius:10px;background:${state.calSub==='series'?"rgba(229,9,20,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${state.calSub==='series'?"rgba(229,9,20,0.5)":"rgba(255,255,255,0.08)"};color:${state.calSub==='series'?"#E50914":"#3A5A7A"};font-weight:700;font-size:12px;cursor:pointer;">📺 Séries</button>
+  </div>
+
+  <!-- Sorties Films -->
+  ${(state.calSub||'movies')==='movies'?`
+  ${CINE_LOADING["upcoming"]?loadingSpinner():""}
+  ${CINE_CACHE["upcoming"]&&!CINE_CACHE["upcoming"].error?`
+    <div class="stitle"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">🎬 Prochains films en France</span></div>
+    ${(CINE_CACHE["upcoming"].results||[]).slice(0,12).map(m=>{
+      const it=formatItem(m,"movie");
+      const d=it.date?new Date(it.date):null;
+      const dStr=d?d.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"Date inconnue";
+      const k=cacheItem(it);
+      const towatch=inList(it.id,it.type,"towatch");
+      return`<div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(232,160,0,0.15);border-radius:12px;margin-bottom:8px;">
+        <div onclick="openDetail(${it.id},'movie')" class="press" style="flex-shrink:0;cursor:pointer;">
+          ${it.poster?`<img src="${it.poster}" style="width:52px;height:78px;border-radius:8px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:52px;height:78px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">🎬</div>`}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div onclick="openDetail(${it.id},'movie')" class="press" style="cursor:pointer;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.title}</div>
+            <div style="font-size:12px;color:#E8A000;font-weight:600;margin-bottom:3px;">📅 ${dStr}</div>
+            <div style="font-size:11px;color:#5A7A9A;margin-bottom:7px;">⭐ ${it.score}</div>
+          </div>
+          <button onclick="addToListById('${k}','towatch')" class="press" style="font-size:10px;padding:4px 10px;border-radius:8px;background:${towatch?"rgba(29,185,84,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${towatch?"rgba(29,185,84,0.4)":"rgba(255,255,255,0.1)"};color:${towatch?"#1DB954":"#5A7A9A"};cursor:pointer;font-weight:700;">${towatch?"✓ À voir":"+ À voir"}</button>
+        </div>
+      </div>`;
+    }).join("")}
+  `:""}
+  `:""}
+
+  <!-- Sorties Séries -->
+  ${state.calSub==='series'?`
+  ${CINE_LOADING["upcoming_series"]?loadingSpinner():""}
+  ${CINE_CACHE["upcoming_series"]&&!CINE_CACHE["upcoming_series"].error?`
+    <div class="stitle"><div class="bar" style="background:#E50914;"></div><span style="color:#E50914;">📺 Séries actuellement diffusées</span></div>
+    ${(CINE_CACHE["upcoming_series"].results||[]).slice(0,12).map(m=>{
+      const it=formatItem(m,"tv");
+      const d=it.date?new Date(it.date):null;
+      const dStr=d?d.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"En cours";
+      const k=cacheItem(it);
+      const towatch=inList(it.id,it.type,"towatch");
+      return`<div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(229,9,20,0.15);border-radius:12px;margin-bottom:8px;">
+        <div onclick="openDetail(${it.id},'tv')" class="press" style="flex-shrink:0;cursor:pointer;">
+          ${it.poster?`<img src="${it.poster}" style="width:52px;height:78px;border-radius:8px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:52px;height:78px;border-radius:8px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;">📺</div>`}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div onclick="openDetail(${it.id},'tv')" class="press" style="cursor:pointer;">
+            <div style="font-size:14px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.title}</div>
+            <div style="font-size:12px;color:#E50914;font-weight:600;margin-bottom:3px;">📅 ${dStr}</div>
+            <div style="font-size:11px;color:#5A7A9A;margin-bottom:7px;">⭐ ${it.score}</div>
+          </div>
+          <button onclick="addToListById('${k}','towatch')" class="press" style="font-size:10px;padding:4px 10px;border-radius:8px;background:${towatch?"rgba(29,185,84,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${towatch?"rgba(29,185,84,0.4)":"rgba(255,255,255,0.1)"};color:${towatch?"#1DB954":"#5A7A9A"};cursor:pointer;font-weight:700;">${towatch?"✓ À voir":"+ À voir"}</button>
+        </div>
+      </div>`;
+    }).join("")}
+  `:""}
+  `:""}
+  `:""}
+</div>`;
+}
+
+function cineCard(item){
+  const c=item.type==="tv"?"#E50914":"#E8A000";
+  const watched=inList(item.id,item.type,"watched");
+  const towatch=inList(item.id,item.type,"towatch");
+  const k=cacheItem(item);
+  return`<div style="background:rgba(255,255,255,0.03);border:1px solid ${c}20;border-top:2px solid ${c};border-radius:14px;padding:13px;margin-bottom:10px;display:flex;gap:12px;">
+    <div onclick="openDetail(${item.id},'${item.type}')" class="press" style="flex-shrink:0;cursor:pointer;">
+      ${item.poster?`<img src="${item.poster}" style="width:58px;height:87px;border-radius:8px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:58px;height:87px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:26px;">${item.type==="tv"?"📺":"🎬"}</div>`}
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div onclick="openDetail(${item.id},'${item.type}')" class="press" style="cursor:pointer;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title}</div>
+        <div style="font-size:11px;color:${c};margin-bottom:5px;">⭐ ${item.score} · 📅 ${item.date?new Date(item.date).getFullYear():""}</div>
+        <div style="font-size:11px;color:#5A7A9A;line-height:1.4;margin-bottom:8px;">${item.synopsis.slice(0,80)}${item.synopsis.length>80?"...":""}</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="addToListById('${k}','towatch')" class="press" style="font-size:10px;padding:4px 8px;border-radius:8px;background:${towatch?"rgba(29,185,84,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${towatch?"rgba(29,185,84,0.4)":"rgba(255,255,255,0.1)"};color:${towatch?"#1DB954":"#5A7A9A"};cursor:pointer;font-weight:700;">${towatch?"✓ À voir":"+ À voir"}</button>
+        <button onclick="addToListById('${k}','watched')" class="press" style="font-size:10px;padding:4px 8px;border-radius:8px;background:${watched?"rgba(0,87,168,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${watched?"rgba(0,87,168,0.4)":"rgba(255,255,255,0.1)"};color:${watched?"#0057A8":"#5A7A9A"};cursor:pointer;font-weight:700;">${watched?"✓ Vu":"+ Déjà vu"}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function loadingSpinner(){
+  return`<div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:50px 0;"><div class="spinner"></div><div style="font-size:13px;color:var(--sub);">Chargement TMDB...</div></div>`;
+}
+
+function renderDetail(){
+  const item=state.detailItem;
+  if(!item) return renderCine();
+  const isMovie=item.type==="movie";
+  const ac=isMovie?"#E8A000":"#E50914";
+  const watched=inList(item.id,item.type,"watched");
+  const towatch=inList(item.id,item.type,"towatch");
+  const rating=getRating(item.id,item.type);
+
+  return`<div class="section">
+  <!-- Back -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="state.detailItem=null;showSection('cine');" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 11px;color:#A8C8E8;font-size:14px;">←</button>
+    <div style="font-size:13px;color:var(--sub);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title}</div>
+  </div>
+
+  <!-- Poster + infos -->
+  <div style="display:flex;gap:14px;margin-bottom:16px;">
+    ${item.poster?`<img src="${item.poster}" style="width:100px;height:150px;border-radius:12px;object-fit:cover;flex-shrink:0;border:2px solid ${ac}33;"/>`:`<div style="width:100px;height:150px;border-radius:12px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;">${isMovie?"🎬":"📺"}</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:17px;font-weight:800;color:var(--text);margin-bottom:4px;line-height:1.2;">${item.title}</div>
+      ${item.tagline?`<div style="font-size:12px;color:${ac};font-style:italic;margin-bottom:6px;">"${item.tagline}"</div>`:""}
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+        <span style="font-size:14px;font-weight:800;color:#FFD700;">⭐ ${item.score}</span>
+        <span style="font-size:11px;color:var(--sub);">(${(item.votes||0).toLocaleString()} votes)</span>
+      </div>
+      ${item.date?`<div style="font-size:11px;color:var(--sub);margin-bottom:4px;">📅 ${new Date(item.date).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})}</div>`:""}
+      ${item.runtime?`<div style="font-size:11px;color:var(--sub);margin-bottom:4px;">⏱ ${item.runtime} min</div>`:""}
+      ${item.seasons?`<div style="font-size:11px;color:var(--sub);margin-bottom:4px;">📺 ${item.seasons} saison${item.seasons>1?"s":""} · ${item.episodes} épisodes</div>`:""}
+      ${item.status?`<div style="font-size:10px;background:${ac}22;color:${ac};border-radius:6px;padding:2px 8px;display:inline-block;font-weight:700;margin-bottom:6px;">${item.status}</div>`:""}
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">
+        ${(item.genres||[]).map(g=>`<span style="font-size:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:2px 7px;color:#7A9BBB;">${g}</span>`).join("")}
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <button onclick="addToList(state.detailItem,'towatch')" class="press" style="flex:1;padding:10px;border-radius:12px;background:${towatch?"rgba(29,185,84,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${towatch?"rgba(29,185,84,0.4)":"rgba(255,255,255,0.1)"};color:${towatch?"#1DB954":"var(--text)"};font-weight:700;font-size:12px;cursor:pointer;">${towatch?"✓ Dans À voir":"📋 À voir"}</button>
+    <button onclick="addToList(state.detailItem,'watched')" class="press" style="flex:1;padding:10px;border-radius:12px;background:${watched?"rgba(0,87,168,0.2)":"rgba(255,255,255,0.06)"};border:1px solid ${watched?"rgba(0,87,168,0.4)":"rgba(255,255,255,0.1)"};color:${watched?"#0057A8":"var(--text)"};font-weight:700;font-size:12px;cursor:pointer;">${watched?"✓ Déjà vu":"👁 Déjà vu"}</button>
+  </div>
+
+  <!-- Mon avis -->
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-size:11px;color:var(--sub);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Mon avis</div>
+    <div style="display:flex;gap:4px;margin-bottom:8px;">
+      ${[1,2,3,4,5].map(s=>`<button onclick="setRating(${item.id},'${item.type}',${s})" class="press" style="font-size:24px;background:none;border:none;cursor:pointer;opacity:${rating>=s?1:0.2};">⭐</button>`).join("")}
+      ${rating>0?`<span style="font-size:12px;color:#FFD700;margin-left:6px;align-self:center;font-weight:700;">${rating}/5</span>`:""}
+    </div>
+    <textarea placeholder="Écris ton avis..." rows="3" style="resize:none;font-size:13px;width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px;color:var(--text);outline:none;line-height:1.5;font-family:inherit;"></textarea>
+  </div>
+
+  <!-- Plateformes -->
+  ${item.providers&&item.providers.length>0?`
+  <div class="stitle"><div class="bar" style="background:#1DB954;"></div><span style="color:#1DB954;">Disponible sur (France)</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+    ${item.providers.map(p=>`<div style="display:flex;align-items:center;gap:6px;background:${p.color}22;border:1px solid ${p.color}44;border-radius:12px;padding:7px 12px;">
+      ${p.logo?`<img src="${p.logo}" style="width:22px;height:22px;border-radius:5px;object-fit:cover;" onerror="this.style.display='none'"/>`:`<div style="width:22px;height:22px;border-radius:5px;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;">${p.icon}</div>`}
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${p.color};">${p.name}</div>
+        <div style="font-size:9px;color:var(--sub);">${p.type==="stream"?"Inclus":"Location"}</div>
+      </div>
+    </div>`).join("")}
+  </div>`:`<div style="margin-bottom:12px;"><div class="stitle"><div class="bar" style="background:#3A5A7A;"></div><span style="color:#3A5A7A;">Disponible sur</span></div><div style="font-size:12px;color:var(--sub);padding:6px 0;">Non disponible en streaming en France</div></div>`}
+
+  <!-- Pays dispo -->
+  ${item.countries&&item.countries.length>0?`
+  <div style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none';this.querySelector('.arr').textContent=this.nextElementSibling.style.display==='none'?'▼':'▲';">
+      <div style="width:3px;height:14px;border-radius:2px;background:#0057A8;flex-shrink:0;"></div>
+      <span style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#0057A8;">Pays de streaming (${item.countries.length})</span>
+      <span class="arr" style="font-size:10px;color:#3A5A7A;margin-left:auto;">▼</span>
+    </div>
+    <div style="display:none;flex-wrap:wrap;gap:6px;">
+      ${item.countries.map(c=>`<span style="font-size:11px;background:rgba(0,87,168,0.1);border:1px solid rgba(0,87,168,0.2);border-radius:8px;padding:4px 9px;color:#A8C8E8;">${c}</span>`).join("")}
+    </div>
+  </div>`:""}
+
+  <!-- Synopsis -->
+  <div class="stitle"><div class="bar" style="background:${ac};"></div><span style="color:${ac};">Synopsis</span></div>
+  <div style="font-size:13px;color:#A8C8E8;line-height:1.7;margin-bottom:16px;">${item.synopsis||"Synopsis non disponible."}</div>
+
+  <!-- Cast -->
+  ${item.cast&&item.cast.length>0?`
+  <div class="stitle"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">Acteurs</span></div>
+  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;">
+    ${item.cast.map(a=>`<div onclick="openActor(${a.id})" class="press" style="flex-shrink:0;width:72px;text-align:center;cursor:pointer;">
+      ${a.photo?`<img src="${a.photo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:5px;border:2px solid rgba(255,215,0,0.3);" loading="lazy" onerror="this.parentElement.querySelector('.actor-placeholder').style.display='flex';this.style.display='none'"/><div class="actor-placeholder" style="display:none;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.08);align-items:center;justify-content:center;font-size:26px;margin-bottom:5px;">👤</div>`:`<div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:5px;">👤</div>`}
+      <div style="font-size:10px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.name}</div>
+      <div style="font-size:9px;color:#FFD700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.char}</div>
+    </div>`).join("")}
+  </div>`:""}
+
+  <!-- Similaires -->
+  ${item.similar&&item.similar.length>0?`
+  <div class="stitle"><div class="bar" style="background:#8B6A9A;"></div><span style="color:#8B6A9A;">Similaires</span></div>
+  <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+    ${item.similar.map(m=>`<div onclick="openDetail(${m.id},'${m.type}')" class="press" style="flex-shrink:0;width:80px;cursor:pointer;">
+      ${m.poster?`<img src="${m.poster}" style="width:80px;height:120px;border-radius:8px;object-fit:cover;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:80px;height:120px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:24px;">${m.type==="tv"?"📺":"🎬"}</div>`}
+      <div style="font-size:10px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.title}</div>
+    </div>`).join("")}
+  </div>`:""}
+</div>`;
+}
+
+function expandBio(){
+  const el=document.getElementById('bio-text');
+  if(el&&state.actorItem?.bio){ el.textContent=state.actorItem.bio; el.nextElementSibling?.remove(); }
+}
+
+async function openActor(id){
+  toast("👤","Chargement de l'acteur...","#FFD700");
+  try{
+    const [person, credits] = await Promise.all([
+      tmdbFetch(`/person/${id}`),
+      tmdbFetch(`/person/${id}/combined_credits`)
+    ]);
+    // Sort by popularity, keep movies + tv, remove duplicates
+    const all = [...(credits.cast||[])];
+    const seen = new Set();
+    const filmography = all
+      .filter(m=>{ const k=`${m.media_type}_${m.id}`; if(seen.has(k))return false; seen.add(k); return m.poster_path&&(m.title||m.name); })
+      .sort((a,b)=>(b.popularity||0)-(a.popularity||0))
+      .slice(0,24)
+      .map(m=>({
+        id:m.id, type:m.media_type,
+        title:m.title||m.name,
+        date:m.release_date||m.first_air_date||"",
+        score:m.vote_average?m.vote_average.toFixed(1):"N/A",
+        poster:m.poster_path?TMDB_IMG_SM+m.poster_path:null,
+        char:m.character||""
+      }));
+    state.actorItem={
+      id, name:person.name,
+      photo:person.profile_path?TMDB_IMG_LG+person.profile_path:null,
+      born:person.birthday||"",
+      place:person.place_of_birth||"",
+      bio:person.biography||"",
+      known:person.known_for_department||"",
+      filmography
+    };
+    showSection("actor");
+  }catch(e){ toast("❌","Impossible de charger","#C8102E"); }
+}
+
+function renderActor(){
+  const a=state.actorItem;
+  if(!a) return renderCine();
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <button onclick="history.length>1?showSection('detail'):showSection('cine');" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 11px;color:#A8C8E8;font-size:14px;">←</button>
+    <div style="font-size:13px;color:var(--sub);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.name}</div>
+  </div>
+
+  <!-- Profil -->
+  <div style="display:flex;gap:14px;margin-bottom:16px;">
+    ${a.photo?`<img src="${a.photo}" style="width:90px;height:135px;border-radius:14px;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,215,0,0.3);"/>`:`<div style="width:90px;height:135px;border-radius:14px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:40px;">👤</div>`}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:19px;font-weight:800;color:var(--text);margin-bottom:6px;line-height:1.2;">${a.name}</div>
+      ${a.known?`<div style="font-size:11px;background:rgba(255,215,0,0.15);color:#FFD700;border-radius:8px;padding:3px 9px;display:inline-block;font-weight:700;margin-bottom:8px;">${a.known}</div>`:""}
+      ${a.born?`<div style="font-size:12px;color:var(--sub);margin-bottom:3px;">🎂 ${new Date(a.born).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})}</div>`:""}
+      ${a.place?`<div style="font-size:12px;color:var(--sub);margin-bottom:3px;">📍 ${a.place}</div>`:""}
+      <div style="font-size:12px;color:#FFD700;font-weight:700;margin-top:6px;">🎬 ${a.filmography.length} films & séries</div>
+    </div>
+  </div>
+
+  <!-- Bio -->
+  ${a.bio?`
+  <div class="stitle"><div class="bar" style="background:#FFD700;"></div><span style="color:#FFD700;">Biographie</span></div>
+  <div id="bio-text" style="font-size:13px;color:#A8C8E8;line-height:1.7;margin-bottom:4px;">${a.bio.slice(0,300)}${a.bio.length>300?"...":""}</div>
+  ${a.bio.length>300?`<button onclick="expandBio()" class="press" style="background:none;border:none;color:#FFD700;font-size:12px;cursor:pointer;margin-bottom:12px;">Lire la suite →</button>`:`<div style="margin-bottom:12px;"></div>`}`:""}
+
+  <!-- Filmographie -->
+  <div class="stitle"><div class="bar" style="background:#E8A000;"></div><span style="color:#E8A000;">Filmographie</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
+    ${a.filmography.map(m=>{
+      const k=cacheItem(m);
+      const ac=m.type==="tv"?"#E50914":"#E8A000";
+      return`<div onclick="openDetail(${m.id},'${m.type}')" class="press" style="cursor:pointer;position:relative;">
+        ${m.poster?`<img src="${m.poster}" style="width:100%;aspect-ratio:2/3;border-radius:10px;object-fit:cover;border:1px solid ${ac}33;" loading="lazy" onerror="this.style.display='none'"/>`:`<div style="width:100%;aspect-ratio:2/3;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:24px;">${m.type==="tv"?"📺":"🎬"}</div>`}
+        <div style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.75);border-radius:5px;padding:2px 5px;font-size:9px;color:#FFD700;font-weight:700;">⭐${m.score}</div>
+        <div style="font-size:10px;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);">${m.title}</div>
+        <div style="font-size:9px;color:${ac};">${m.date?new Date(m.date).getFullYear():""} · ${m.type==="tv"?"Série":"Film"}</div>
+        ${m.char?`<div style="font-size:9px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.char}</div>`:""}
+      </div>`;
+    }).join("")}
+  </div>
+</div>`;
+}
+
+function renderMyList(){
+  const tab=state.myListTab||"towatch";
+  const list=tab==="watched"?state.cineWatched:state.cineMyList;
+  return`<div class="section">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:#1DB954;"></div><span style="color:#1DB954;">Ma liste</span></div>
+    <span style="font-size:12px;color:var(--sub);">${list.length} titre${list.length>1?"s":""}</span>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <button onclick="state.myListTab='towatch';render();" class="press" style="flex:1;padding:9px;border-radius:12px;background:${tab==="towatch"?"rgba(29,185,84,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${tab==="towatch"?"rgba(29,185,84,0.4)":"rgba(255,255,255,0.08)"};color:${tab==="towatch"?"#1DB954":"#3A5A7A"};font-weight:700;font-size:12px;cursor:pointer;">📋 À voir (${state.cineMyList.length})</button>
+    <button onclick="state.myListTab='watched';render();" class="press" style="flex:1;padding:9px;border-radius:12px;background:${tab==="watched"?"rgba(0,87,168,0.2)":"rgba(255,255,255,0.04)"};border:1px solid ${tab==="watched"?"rgba(0,87,168,0.4)":"rgba(255,255,255,0.08)"};color:${tab==="watched"?"#0057A8":"#3A5A7A"};font-weight:700;font-size:12px;cursor:pointer;">👁 Déjà vu (${state.cineWatched.length})</button>
+  </div>
+  ${list.length===0?`<div style="text-align:center;padding:50px 20px;"><div style="font-size:50px;margin-bottom:14px;">${tab==="watched"?"👁":"📋"}</div><div style="font-size:14px;font-weight:700;margin-bottom:8px;">${tab==="watched"?"Aucun film vu encore":"Aucun film à voir"}</div><div style="font-size:12px;color:var(--sub);">Va dans Ciné & Séries pour en ajouter !</div><button onclick="showSection('cine')" class="btn press" style="margin-top:14px;width:auto;padding:10px 20px;">🎬 Découvrir</button></div>`:""}
+  ${list.map(item=>{
+    const ac=item.type==="tv"?"#E50914":"#E8A000";
+    const rating=getRating(item.id,item.type);
+    return`<div style="display:flex;gap:12px;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;margin-bottom:8px;">
+      <div onclick="openDetail(${item.id},'${item.type}')" class="press" style="flex-shrink:0;cursor:pointer;">
+        ${item.poster?`<img src="${item.poster}" style="width:50px;height:75px;border-radius:8px;object-fit:cover;"/>`:`<div style="width:50px;height:75px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:22px;">${item.type==="tv"?"📺":"🎬"}</div>`}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;">${item.title}</div>
+        <div style="font-size:11px;color:${ac};margin-bottom:5px;">⭐ ${item.score} · ${item.date?new Date(item.date).getFullYear():""}</div>
+        ${rating>0?`<div style="font-size:12px;color:#FFD700;margin-bottom:4px;">${"⭐".repeat(rating)} Mon avis</div>`:""}
+        <div style="display:flex;gap:6px;">
+          <button onclick="openDetail(${item.id},'${item.type}')" class="press" style="font-size:10px;padding:4px 8px;border-radius:8px;background:${ac}22;border:1px solid ${ac}44;color:${ac};cursor:pointer;font-weight:700;">Fiche</button>
+          <button onclick="removeFromList(${item.id},'${item.type}','${tab}')" class="press" style="font-size:10px;padding:4px 8px;border-radius:8px;background:rgba(200,16,46,0.1);border:1px solid rgba(200,16,46,0.2);color:#C8102E;cursor:pointer;font-weight:700;">Retirer</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("")}
+</div>`;
+}
+
+// ── HUB PLUS ─────────────────────────────────────────────────────────────────
+function renderMore(){
+  const items=[
+    {icon:"🎬",label:"Ciné & Séries",desc:"Films, séries, acteurs",section:"cine",color:"#E8A000"},
+    {icon:"📋",label:"Ma liste",desc:"À voir · Déjà vu",section:"mylist",color:"#1DB954"},
+    {icon:"❝",label:"Citations HR",desc:"50 citations Heated Rivalry",section:"quotes",color:"#C8102E"},
+  ];
+  return`<div class="section">
+  <div style="text-align:center;padding:14px 0 18px;">
+    <div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:26px;letter-spacing:4px;color:var(--accent);">DÉCOUVRIR</div>
+    <div style="font-size:10px;color:var(--sub);letter-spacing:2px;text-transform:uppercase;">Toutes les fonctionnalités</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    ${items.map(it=>`<button onclick="showSection('${it.section}')" class="press" style="background:${it.color}12;border:1px solid ${it.color}30;border-top:3px solid ${it.color};border-radius:16px;padding:16px 12px;text-align:left;cursor:pointer;">
+      <div style="font-size:26px;margin-bottom:8px;">${it.icon}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;">${it.label}</div>
+      <div style="font-size:11px;color:var(--sub);line-height:1.3;">${it.desc}</div>
+    </button>`).join("")}
+  </div>
+</div>`;
+}
+
+// ── CITATIONS INTELLIGENTES ───────────────────────────────────────────────────
+// Mots-clés → citations correspondantes
+const QUOTE_KEYWORDS = [
+  {words:["haine","déteste","haïr","ennemi","adversaire","rivalité","combat","guerre","opposé"],indices:[0,2,4,6,7,11,14,18,22,26,28,32,36,41,45]},
+  {words:["amour","aimer","envie","vouloir","sentir","cœur","attir"],indices:[1,3,5,9,12,15,17,21,24,27,30,34,38,42,47]},
+  {words:["fatigué","épuisant","difficile","dur","peine","mal","souffr"],indices:[18,19,26,28,36,37,44,47,49]},
+  {words:["glace","hockey","match","sport","jeu","jouer","patin","équipe"],indices:[0,2,4,6,7,14,17,25,32,38,41,46]},
+  {words:["seul","manque","absent","loin","sépar","distance","oubli"],indices:[14,15,24,27,30,34,36,43,47]},
+  {words:["regard","yeux","voir","observer","watch"],indices:[0,4,9,15,19,21,31,35,40]},
+  {words:["destin","choix","hasard","rencontr"],indices:[8,11,16,28,32,40,42,47,48]},
+  {words:["bien","super","génial","heureux","joie","content","parfait"],indices:[6,7,20,22,25,33,38,41,46]},
+];
+
+function getSmartQuote(text){
+  if(!text||text.trim().length<10) return null;
+  const lower = text.toLowerCase();
+  const scores = new Array(QUOTES.length).fill(0);
+  QUOTE_KEYWORDS.forEach(({words,indices})=>{
+    if(words.some(w=>lower.includes(w))){
+      indices.forEach(i=>{if(i<QUOTES.length)scores[i]+=1;});
+    }
+  });
+  // Aussi boost selon le mood
+  if(state.journalMood==="fire"||state.journalMood==="game") [0,2,4,6,7].forEach(i=>{if(i<QUOTES.length)scores[i]+=2;});
+  if(state.journalMood==="love") [1,3,5,9,12,15].forEach(i=>{if(i<QUOTES.length)scores[i]+=2;});
+  if(state.journalMood==="tired") [18,19,26,36].forEach(i=>{if(i<QUOTES.length)scores[i]+=2;});
+  if(state.journalMood==="chill") [7,10,22,25].forEach(i=>{if(i<QUOTES.length)scores[i]+=2;});
+  const maxScore = Math.max(...scores);
+  if(maxScore===0) return QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  const best = scores.map((s,i)=>({s,i})).filter(x=>x.s===maxScore);
+  const pick = best[Math.floor(Math.random()*best.length)];
+  return {...QUOTES[pick.i], idx:pick.i};
+}
+
+// ── TOUTES LES CITATIONS ──────────────────────────────────────────────────────
+function renderQuotes(){
+  const fc=state.quotesFilter||"all";
+  const filtered=fc==="all"?QUOTES:QUOTES.filter(q=>q.c===fc);
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <button onclick="showSection('more')" class="press" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:7px 10px;color:#A8C8E8;font-size:14px;">←</button>
+    <div class="stitle" style="margin-bottom:0;flex:1;"><div class="bar" style="background:#C8102E;"></div><span style="color:#C8102E;">❝ Citations</span></div>
+    <span style="font-size:12px;color:var(--sub);">${QUOTES.length} · 💙 ${state.favs.length}</span>
+  </div>
+  <div class="pills" style="margin-bottom:14px;">
+    ${[{k:"all",l:"Toutes"},{k:"S",l:"🍁 Shane"},{k:"I",l:"🐻 Ilya"},{k:"B",l:"🏒 Les deux"}].map(f=>`<div class="pill${fc===f.k?" active":""}" onclick="state.quotesFilter='${f.k}';render();" style="${fc===f.k?"background:rgba(200,16,46,0.2);border-color:rgba(200,16,46,0.4);color:#C8102E;":""}">${f.l}</div>`).join("")}
+  </div>
+  ${filtered.map(q=>{const ac=q.c==="S"?"#C8102E":q.c==="I"?"#0057A8":"#8B6A9A";const ri=QUOTES.indexOf(q);const isFav=state.favs.includes(ri);
+  return`<div style="background:${ac}10;border:1px solid ${ac}25;border-left:3px solid ${ac};border-radius:12px;padding:14px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:14px;">${q.c==="S"?"🍁":q.c==="I"?"🐻":"🏒"}</span>
+      <span style="font-size:10px;color:${ac};font-weight:700;letter-spacing:1px;">${q.a}</span>
+      <button onclick="toggleFav(${ri})" class="press" style="margin-left:auto;background:none;border:none;font-size:16px;opacity:${isFav?1:0.25};cursor:pointer;">💙</button>
+    </div>
+    <div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic;font-family:Georgia,serif;">${q.t}</div>
+  </div>`;}).join("")}
+</div>`;
+}
+
+// ── MÉTÉO ─────────────────────────────────────────────────────────────────────
+async function fetchWeather(){
+  if(state.weatherLoading||state.weather)return;
+  state.weatherLoading=true;render();
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:5000}));
+    const {latitude:lat,longitude:lon}=pos.coords;
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m&timezone=auto`);
+    const d=await r.json();
+    state.weather={temp:Math.round(d.current.temperature_2m),code:d.current.weathercode,wind:Math.round(d.current.windspeed_10m),icon:WEATHER_ICONS[d.current.weathercode]||"🌡️"};
+  }catch(e){state.weather={error:true};}
+  state.weatherLoading=false;render();
+}
+
+// ── ACTIONS NOUVELLES ─────────────────────────────────────────────────────────
+
+
+function renderSettings(){
+  return`<div class="section">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+    <button onclick="showSection('dashboard')" style="background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:8px 12px;color:#A8C8E8;font-size:16px;" class="press">←</button>
+    <div class="stitle" style="margin-bottom:0;"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">⚙️ Paramètres</span></div>
+  </div>
+
+  <!-- THÈME -->
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🎨 Thème</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">${Object.entries(THEMES).map(([k,t])=>`<button onclick="setTheme('${k}')" style="background:${state.theme===k?t.a+"22":"rgba(255,255,255,0.04)"};border:${state.theme===k?`1.5px solid ${t.a}`:"1px solid rgba(255,255,255,0.08)"};border-radius:14px;padding:14px 12px;text-align:left;" class="press"><div style="width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,${t.a},${t.b});margin-bottom:8px;"></div><div style="font-size:13px;font-weight:700;color:var(--text);">${t.n}</div></button>`).join("")}</div>
+
+  <!-- SONS -->
+  <div class="stitle"><div class="bar" style="background:var(--accent);"></div><span style="color:var(--accent);">🔊 Sons</span></div>
+  <div class="toggle-row press" onclick="toggleSound()">
+    <div style="font-size:22px;">${state.sound?"🔊":"🔇"}</div>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:600;">Sons de l'appli</div><div style="font-size:12px;color:var(--sub);">Bruitage de patins, sirène, mélodie</div></div>
+    <div class="toggle" style="background:${state.sound?"linear-gradient(90deg,var(--accent),var(--accent2))":"rgba(255,255,255,0.1)"};">
+      <div class="knob" style="left:${state.sound?"23px":"3px"};"></div>
+    </div>
+  </div>
+
+  <!-- À PROPOS -->
+  <div class="stitle" style="margin-top:8px;"><div class="bar" style="background:var(--sub);"></div><span style="color:var(--sub);">ℹ️ À propos</span></div>
+  <div class="card"><div style="font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;letter-spacing:3px;background:linear-gradient(135deg,#E8C4B8,#C8102E 40%,#0057A8 70%,#A8C8E8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;">ON THE ICE</div><div style="font-size:12px;color:var(--sub);line-height:1.6;">Inspiré de <em style="color:#A8C8E8;">Heated Rivalry</em> de Rachel Reid.<br/>Shane & Ilya forever. 🏒💙</div></div>
+</div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function selDay(ds){state.selDay=ds;state.journalDraft=state.journal[ds]?.text||"";state.journalTitle=state.journal[ds]?.title||"";state.journalMood=state.journal[ds]?.mood||null;state.journalEmoji=state.journal[ds]?.emoji||"";state.journalTags=state.journal[ds]?.tags||[];state.journalPhoto=state.journal[ds]?.photo||null;render();}
+function showSection(v){state.view=v;render();}
+function nextQuote(){state.quoteIdx=(state.quoteIdx+1)%QUOTES.length;vib([5]);render();}
+function toggleFav(i){state.favs=state.favs.includes(i)?state.favs.filter(x=>x!==i):[...state.favs,i];save();render();}
+function togglePom(){state.pom.running=!state.pom.running;if(state.pom.running)playSound("check");render();}
+function resetPom(){state.pom.running=false;state.pom.mode="work";state.pom.secs=25*60;if(window._pt){clearInterval(window._pt);window._pt=null;}render();}
+function setPomDur(v,m){state.pom.running=false;state.pom.mode=m;state.pom.secs=v;if(window._pt){clearInterval(window._pt);window._pt=null;}render();}
+function toggleHabit(hid){vib([8]);playSound("check");if(!state.checked[todayStr])state.checked[todayStr]={};state.checked[todayStr][hid]=!state.checked[todayStr][hid];if(state.habits.filter(h=>state.checked[todayStr][h.id]).length===state.habits.length)setTimeout(()=>{playSound("done");vib([100,50,100]);},100);save();render();}
+function addHabit(){const nh=state.newHabit;if(!nh.label.trim())return;state.habits.push({id:Date.now().toString(),...nh});vib([10,5,10]);state.newHabit={label:"",icon:"⭐",color:"#4ECDC4"};state.showHabitForm=false;save();render();}
+function saveJournal(){if(!state.journalDraft.trim()&&!state.journalMood)return;state.journal[state.selDay]={text:state.journalDraft,mood:state.journalMood,date:state.selDay};vib([10,5,10]);playSound("done");toast("💾 Journal sauvegardé","","var(--accent)");save();render();}
+function setTheme(k){state.theme=k;applyTheme(k);save();render();}
+function toggleSound(){state.sound=!state.sound;save();render();}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+applyTheme(state.theme);
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.style.display="none";},2800);
+
+// Démarre directement sur l'accueil — toujours
+document.getElementById("nav").style.display="flex";
+applyTheme(state.theme);
+render();
+</script>
+</body>
+</html>
